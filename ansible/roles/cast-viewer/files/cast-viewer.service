@@ -1,6 +1,6 @@
 [Unit]
 Description=Cast Viewer
-After=matchbox.service cast-web.service
+After=network-online.target
 
 [Service]
 WorkingDirectory=/home/pi/cast-viewer
