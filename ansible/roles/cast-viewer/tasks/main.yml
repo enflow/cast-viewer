@@ -1,0 +1,24 @@
+- name: Copy in GTK config
+  copy:
+    owner: pi
+    group: pi
+    src: gtkrc-2.0
+    dest: /home/pi/.gtkrc-2.0
+
+- name: Install pip dependencies
+  pip: "requirements={{ playbook_dir }}/../requirements.txt"
+
+- name: Copy cast systemd units
+  copy:
+    src: "{{ item }}"
+    dest: "/etc/systemd/system/{{ item }}"
+  with_items: "{{ cast_viewer_systemd_units }}"
+
+- name: Enable cast systemd services
+  command: systemctl enable {{ item }} chdir=/etc/systemd/system
+  with_items: "{{ cast_viewer_systemd_units }}"
+
+- name: Restart services
+  command: /bin/true
+  notify:
+    - restart-cart-viewer

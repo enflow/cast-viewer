@@ -1,0 +1,13 @@
+- name: Install Cast Viewer
+  hosts: all
+  user: pi
+  become: yes
+
+  handlers:
+    - name: restart-cast-viewer
+      command: systemctl restart cast-viewer.service
+
+  roles:
+    - system
+    - cast-viewer
+    - splashscreen

@@ -1,0 +1,31 @@
+[Unit]
+Description=Cast Viewer
+After=matchbox.service cast-web.service
+
+[Service]
+WorkingDirectory=/home/pi/cast-viewer
+User=pi
+
+Environment=DISPLAY=:0.0
+
+# Fix white flickering in omxplayer
+Environment=NOREFRESH=1
+
+Environment=PYTHONPATH=/home/pi/cast-viewer
+
+# Don't activate screensaver
+ExecStartPre=/usr/bin/xset s off
+
+# Disable DPMS (Energy Star) features
+ExecStartPre=/usr/bin/xset -dpms
+
+# Don't blank the video device
+ExecStartPre=/usr/bin/xset s noblank
+
+ExecStart=/usr/bin/python /home/pi/-viewer/viewer.py
+Restart=on-failure
+
+ExecStartPost=/bin/rm -f /tmp/uzbl_*
+
+[Install]
+WantedBy=multi-user.target
