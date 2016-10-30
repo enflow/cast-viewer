@@ -5,6 +5,7 @@ from netifaces import ifaddresses
 from sh import grep, netstat
 from urlparse import urlparse
 import pytz
+import sys
 
 HTTP_OK = xrange(200, 299)
 
@@ -25,40 +26,20 @@ def validate_url(string):
     checker = urlparse(string)
     return bool(checker.scheme in ('http', 'https') and checker.netloc)
 
-def url_fails(url):
-    """
-    Try HEAD and GET for URL availability check.
-    """
+def download_with_progress(file_name, url):
+    with open(file_name, "wb") as f:
+        print "Downloading %s" % file_name
+        response = requests.get(url, stream=True)
+        total_length = response.headers.get('content-length')
 
-    # Use Certifi module
-    verify = certifi.where()
-
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (X11; Linux armv7l) AppleWebKit/538.15 (KHTML, like Gecko) Version/8.0 Safari/538.15',
-    }
-    try:
-        if not validate_url(url):
-            return False
-
-        if requests.head(
-            url,
-            allow_redirects=True,
-            headers=headers,
-            timeout=10,
-            verify=verify
-        ).status_code in HTTP_OK:
-            return False
-
-        if requests.get(
-            url,
-            allow_redirects=True,
-            headers=headers,
-            timeout=10,
-            verify=verify
-        ).status_code in HTTP_OK:
-            return False
-
-    except (requests.ConnectionError, requests.exceptions.Timeout):
-        pass
-
-    return True
+        if total_length is None: # no content length header
+            f.write(response.content)
+        else:
+            dl = 0
+            total_length = int(total_length)
+            for data in response.iter_content(chunk_size=4096):
+                dl += len(data)
+                f.write(data)
+                done = int(50 * dl / total_length)
+                sys.stdout.write("\r[%s%s]" % ('=' * done, ' ' * (50-done)) )
+                sys.stdout.flush()

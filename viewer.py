@@ -9,87 +9,26 @@ from json import load as json_load
 import logging
 import sh
 import sys
-import requests
 import os
 import urllib
 
-from lib.utils import url_fails
-from lib.config import get_player_identifier
+from lib.config import get_config, get_player_identifier
+from lib.downloader import Downloader
+from lib.scheduler import Scheduler
 
 __author__ = "Enflow (original by WireLoad Inc)"
 __copyright__ = "Copyright 2012-2016, WireLoad Inc"
 __license__ = "Dual License: GPLv2 and Commercial License"
 
-EMPTY_BROADCAST_DELAY = 5  # secs
+EMPTY_BROADCAST_DELAY = 10  # secs
 
 WATCHDOG_PATH = '/tmp/cast-viewer.watchdog'
 
 current_browser_url = None
 browser = None
+downloader = None
 
 CWD = None
-
-class Scheduler(object):
-    STATE_OK='OK'
-    STATE_REQUIRES_SETUP='REQUIRES_SETUP'
-    STATE_NO_CONNECTION='NO_CONNECTION'
-    STATE_EMPTY='EMPTY'
-
-    def __init__(self, *args, **kwargs):
-        logging.debug('Scheduler init')
-        self.slides = None
-        self.index = 0
-        self.counter = 0
-
-    def fetch(self):
-        logging.debug('Scheduler.fetch')
-
-        try:
-            r = requests.get('https://cast.enflow.nl/api/v1/player/{0}/broadcast'.format(get_player_identifier()))
-            decoded_response = r.json()
-            logging.debug('Status code %s with response %s', r.status_code, decoded_response);
-
-            if r.status_code in xrange(200, 299):
-                logging.debug(self.slides)
-
-                if decoded_response == self.slides:
-                    logging.debug('Broadcast response didn\'t change')
-                    return None
-
-                self.slides = decoded_response
-                self.reload()
-
-                self.state=self.STATE_EMPTY if not self.slides else self.STATE_OK
-            elif r.status_code == 404:
-                self.state=self.STATE_REQUIRES_SETUP
-            else:
-                self.state=self.STATE_NO_CONNECTION if not self.slides else self.STATE_OK
-
-        except requests.exceptions.ConnectionError as e:
-           logging.error('Loading from broadcast cache, ConnectionError: %s', e.args[0].reason.errno)
-
-    def get_next_slide(self):
-        logging.debug('Scheduler.get_next_slide')
-        if not self.slides:
-            return None
-
-        idx = self.index
-        self.index = (self.index + 1) % len(self.slides)
-        logging.debug('get_next_slide counter %s returning slide %s of %s', self.counter, idx + 1, len(self.slides))
-        self.counter += 1
-        return self.slides[idx]
-
-    def reload(self):
-        logging.debug('Scheduler.reload')
-
-        self.counter = 0
-
-        # Try to keep the same position in the play list. E.g. if a new slide is added to the end of the list, we
-        # don't want to start over from the beginning.
-        self.index = self.index % len(self.slides) if self.slides else 0
-
-        logging.debug('reload done, count %s, counter %s, index %s', len(self.slides), self.counter, self.index)
-
 
 def watchdog():
     """Notify the watchdog file to be used with the watchdog-device."""
@@ -97,10 +36,6 @@ def watchdog():
         open(WATCHDOG_PATH, 'w').close()
     else:
         utime(WATCHDOG_PATH, None)
-
-
-def get_template(template, params=[]):
-    return 'file://{0}/templates/{1}.html?{2}'.format(CWD, template, urllib.urlencode(params, True));
 
 
 def load_browser(url=None):
@@ -137,18 +72,18 @@ def browser_send(command, cb=lambda _: True):
 
 
 def browser_template(template, params=[]):
-    logging.debug('Browser template %s with params %s', template, params)
-    browser_url(get_template(template, params), force=True, cb=lambda buf: 'LOAD_FINISH' in buf)
+    logging.debug('Browser template \'%s\' with params %s', template, params)
+    browser_url('file://{0}/templates/{1}.html?{2}'.format(CWD, template, urllib.urlencode(params, True)), force=True)
 
 
-def browser_url(url, cb=lambda _: True, force=False):
+def browser_url(url, force=False):
     global current_browser_url
 
     if url == current_browser_url and not force:
         logging.debug('Already showing %s, reloading it.', current_browser_url)
     else:
         current_browser_url = url
-        browser_send('uri ' + current_browser_url, cb=cb)
+        browser_send('uri ' + current_browser_url, cb=lambda buf: 'LOAD_FINISH' in buf)
         logging.info('current url is %s', current_browser_url)
 
 
@@ -160,7 +95,7 @@ def view_video(uri, duration):
     player_kwargs['_ok_code'] = [0, 124]
 
     if duration and duration != 'N/A':
-        player_args = ['timeout', int(duration.split('.')[0])] + player_args
+        player_args = ['timeout', duration] + player_args
 
     run = sh.Command(player_args[0])(*player_args[1:], **player_kwargs)
 
@@ -177,34 +112,43 @@ def broadcast_loop(scheduler):
     if scheduler.state == scheduler.STATE_NO_CONNECTION:
         browser_template('no_connection')
         sleep(EMPTY_BROADCAST_DELAY)
-    elif scheduler.state == scheduler.STATE_REQUIRES_SETUP:
+        return
+
+    if scheduler.state == scheduler.STATE_REQUIRES_SETUP:
         browser_template('setup', {'player_identifier': get_player_identifier()})
         sleep(EMPTY_BROADCAST_DELAY)
-    else:
-        slide = scheduler.get_next_slide()
-        logging.debug(slide)
+        return
 
-        if slide is None:
-            browser_template('no_slides')
-            sleep(EMPTY_BROADCAST_DELAY)
-        elif path.isfile(slide['url']) or not url_fails(slide['url']):
-            type, url = slide['type'], slide['url']
-            logging.info('Showing slide %s (%s)', type, url)
-            watchdog()
+    slide = scheduler.get_next_slide()
+    logging.debug(slide)
 
-            if 'web' in type:
-                browser_url(url)
+    if slide is None:
+        browser_template('no_slides')
+        sleep(EMPTY_BROADCAST_DELAY)
+        return
 
-                duration = int(slide['duration'])
-                logging.info('Sleeping for %s', duration)
-                sleep(duration)
-            elif 'video' in type:
-                view_video(url, slide['duration'])
-            else:
-                logging.error('Unknown type %s', type)
-        else:
-            logging.info('Slide %s is not available, skipping.', slide['uri'])
+    type, load = slide['type'], slide['url']
+
+    if 'download_hash' in slide:
+        load = downloader.get_path_for_slide(slide)
+        if not os.path.isfile(load):
+            logging.info('Asset with download hash %s at %s is not available, skipping.', slide['download_hash'], slide['uri'])
             sleep(0.5)
+            return
+
+    logging.info('Showing slide %s (%s)', type, load)
+    watchdog()
+
+    if 'web' in type or 'image' in type:
+        browser_url(load)
+
+        duration = int(slide['duration'])
+        logging.info('Sleeping for %s', duration)
+        sleep(duration)
+    elif 'video' in type:
+        view_video(load, slide['duration'])
+    else:
+        logging.error('Unknown type %s', type)
 
 def setup():
     global CWD
@@ -222,9 +166,13 @@ def setup():
 
 
 def main():
+    global downloader
+
     setup()
 
-    scheduler = Scheduler()
+    downloader = Downloader()
+    scheduler = Scheduler(downloader)
+
     logging.debug('Entering infinite loop.')
     while True:
         if scheduler.index is 0:
