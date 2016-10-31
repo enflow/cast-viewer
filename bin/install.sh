@@ -44,5 +44,7 @@ sudo rm -rf /usr/share/man /usr/share/groff /usr/share/info /usr/share/lintian /
 sudo find /usr/share/locale -type f ! -name 'en' ! -name 'de*' ! -name 'es*' ! -name 'ja*' ! -name 'fr*' ! -name 'zh*' -delete
 sudo find /usr/share/locale -mindepth 1 -maxdepth 1 ! -name 'en*' ! -name 'de*' ! -name 'es*' ! -name 'ja*' ! -name 'fr*' ! -name 'zh*' -exec rm -r {} \;
 
-set +x
-echo "Installation completed."
+echo "Installation completed. Rebooting in 5 seconds"
+
+sleep 5
+reboot

@@ -50,16 +50,6 @@
     - x11-xserver-utils
     - xserver-xorg
 
-- name: Remove deprecated apt dependencies
-  apt:
-    name: "{{ item }}"
-    state: absent
-  with_items:
-    - supervisor
-    - lightdm
-    - lightdm-gtk-greeter
-    - dphys-swapfile
-
 - name: Perform system upgrade
   apt:
     upgrade: dist
@@ -70,11 +60,6 @@
   command: apt-get -y autoremove
   tags:
     - system-upgrade
-
-- name: Remove deprecated pip dependencies
-  pip:
-    name: supervisor
-    state: absent
 
 - name: Copy in rc.local
   copy:

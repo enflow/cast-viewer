@@ -12,11 +12,12 @@ class Scheduler(object):
     STATE_NO_CONNECTION='NO_CONNECTION'
     STATE_EMPTY='EMPTY'
 
-    def __init__(self, downloader):
+    def __init__(self, hostname, downloader):
         logging.debug('Scheduler init')
         self.slides = None
         self.index = 0
         self.counter = 0
+        self.hostname = hostname
         self.downloader = downloader
         self.state = self.STATE_NO_CONNECTION
 
@@ -24,7 +25,7 @@ class Scheduler(object):
         logging.debug('Scheduler.fetch')
 
         try:
-            r = requests.get('https://cast.enflow.nl/api/v1/player/{0}?version={1}'.format(get_player_identifier(), get_git_tag()))
+            r = requests.get('https://cast.enflow.nl/api/v1/player/{0}?version={1}'.format(self.hostname, get_git_tag()))
             decoded_response = r.json()
             logging.debug('Status code %s with response %s', r.status_code, decoded_response);
 
