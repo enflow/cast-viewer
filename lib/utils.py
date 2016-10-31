@@ -6,6 +6,7 @@ from sh import grep, netstat
 from urlparse import urlparse
 import pytz
 import sys
+import sh
 
 HTTP_OK = xrange(200, 299)
 
@@ -43,3 +44,7 @@ def download_with_progress(file_name, url):
                 done = int(50 * dl / total_length)
                 sys.stdout.write("\r[%s%s]" % ('=' * done, ' ' * (50-done)) )
                 sys.stdout.flush()
+
+def get_git_tag():
+    commit = sh.git("rev-list", "--tags", "--max-count=1").rstrip()
+    return sh.git("describe", "--tags", commit).rstrip()

@@ -4,6 +4,7 @@ import requests
 import logging
 import downloader
 from lib.config import get_player_identifier
+from lib.utils import get_git_tag
 
 class Scheduler(object):
     STATE_OK='OK'
@@ -23,7 +24,7 @@ class Scheduler(object):
         logging.debug('Scheduler.fetch')
 
         try:
-            r = requests.get('https://cast.enflow.nl/api/v1/player/{0}'.format(get_player_identifier()))
+            r = requests.get('https://cast.enflow.nl/api/v1/player/{0}?version={1}'.format(get_player_identifier(), get_git_tag()))
             decoded_response = r.json()
             logging.debug('Status code %s with response %s', r.status_code, decoded_response);
 
