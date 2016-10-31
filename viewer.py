@@ -11,8 +11,8 @@ import sh
 import sys
 import os
 import urllib
+import socket
 
-from lib.config import get_config, get_player_identifier
 from lib.downloader import Downloader
 from lib.scheduler import Scheduler
 
@@ -27,6 +27,7 @@ browser = None
 downloader = None
 
 CWD = None
+HOSTNAME = None
 
 def load_browser(url=None):
     global browser, current_browser_url
@@ -104,7 +105,7 @@ def broadcast_loop(scheduler):
         return
 
     if scheduler.state == scheduler.STATE_REQUIRES_SETUP:
-        browser_template('setup', {'player_identifier': get_player_identifier()})
+        browser_template('setup', {'player_identifier': HOSTNAME})
         sleep(EMPTY_BROADCAST_DELAY)
         return
 
@@ -139,8 +140,12 @@ def broadcast_loop(scheduler):
         logging.error('Unknown type %s', type)
 
 def setup():
-    global CWD
+    global CWD, HOSTNAME
     CWD = os.getcwd()
+    HOSTNAME = socket.gethostname()
+
+    if HOSTNAME == 'raspberrypi':
+        raise RuntimeError('Hostname still is set to the default "raspberrypi". Unable to identiy with that.')
 
     # output logs to stdout
     root = logging.getLogger()
@@ -159,7 +164,7 @@ def main():
     setup()
 
     downloader = Downloader()
-    scheduler = Scheduler(downloader)
+    scheduler = Scheduler(HOSTNAME, downloader)
 
     logging.debug('Entering infinite loop.')
     while True:

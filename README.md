@@ -3,7 +3,8 @@
 The tl;dr for installing Cast Viewer on [Raspbian](https://www.raspberrypi.org/downloads/raspbian/) Jessie is:
 
 ```
-$ sudo bash <(curl -sL https://raw.githubusercontent.com/enflow-nl/cast-viewer/master/bin/install.sh)
+$ wget https://raw.githubusercontent.com/enflow-nl/cast-viewer/master/bin/install.sh
+$ sudo bash install.sh
 ```
 
 (The installation will take 15-20 minutes or so depending on your connectivity and the speed of your SD card.)

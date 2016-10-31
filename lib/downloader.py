@@ -10,6 +10,7 @@ class Downloader(object):
     def __init__(self):
         logging.debug('Downloader init')
 
+
     def download(self, slides):
         slides_to_download = self.get_slides_to_download(slides)
         logging.debug('Downloader.download: %s', slides_to_download)
@@ -24,6 +25,7 @@ class Downloader(object):
                 continue
 
             download_with_progress(path, slide['url'])
+
 
     def remove_unused(self, slides_to_download):
         download_hashes = []
@@ -40,6 +42,7 @@ class Downloader(object):
     def get_path_for_slide(self, slide):
         return self.get_directory() + '/' + slide['download_hash']
 
+
     def get_slides_to_download(self, slides):
         slides_to_download = []
         for slide in slides:
@@ -47,6 +50,7 @@ class Downloader(object):
                 slides_to_download.append(slide)
 
         return slides_to_download
+
 
     def get_directory(self):
         directory = '/home/pi/cast-viewer-downloads'

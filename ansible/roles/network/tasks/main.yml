@@ -1,3 +1,7 @@
+- name: Set hostname / player identifier
+  script: set_hostname.sh
+  changed_when: false
+
 - name: Copies network manger and watchdog
   copy:
     owner: root
@@ -43,6 +47,10 @@
 
 - name: Activate network watchdog
   command: systemctl enable cast-viewer-net-watchdog.timer chdir=/etc/systemd/system
+
+- name: Install hamachi
+  apt:
+    deb: https://www.vpn.net/installers/logmein-hamachi_2.1.0.165-1_armhf.deb
 
 - name: Restart network services
   command: /bin/true

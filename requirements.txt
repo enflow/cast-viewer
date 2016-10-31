@@ -2,3 +2,5 @@ ansible==2.1.0.0
 configparser==3.5.0
 requests==2.10.0
 sh==1.08
+certifi==2016.9.26
+pytz==2012d
