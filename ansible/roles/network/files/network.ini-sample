@@ -1,0 +1,19 @@
+; Cast viewer network configuration
+
+
+; This is how a static network configuration
+; for wired networking would look like this.
+
+;[eth0]
+;mode=static
+;ip=192.168.1.10
+;netmask=255.255.255.0
+;gateway=192.168.1.1
+
+
+; If you want to configure your WLAN with DHCP,
+; the configuration would look something like this.
+
+;[wlan0]
+;ssid=NameOfYourNetwork
+;passphrase=YourNetworkPassword

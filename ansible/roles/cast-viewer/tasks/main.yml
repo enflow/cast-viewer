@@ -18,6 +18,12 @@
   command: systemctl enable {{ item }} chdir=/etc/systemd/system
   with_items: "{{ cast_viewer_systemd_units }}"
 
+- name: Update cronjob
+  cron:
+    name: Update cronjob
+    minute: */30
+    job: PATH=/usr/bin:/bin bash /home/pi/cast-viewer/bin/update.sh
+
 - name: Restart services
   command: /bin/true
   notify:

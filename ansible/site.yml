@@ -9,5 +9,6 @@
 
   roles:
     - system
+    - network
     - cast-viewer
     - splashscreen

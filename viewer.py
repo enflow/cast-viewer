@@ -22,21 +22,11 @@ __license__ = "Dual License: GPLv2 and Commercial License"
 
 EMPTY_BROADCAST_DELAY = 10  # secs
 
-WATCHDOG_PATH = '/tmp/cast-viewer.watchdog'
-
 current_browser_url = None
 browser = None
 downloader = None
 
 CWD = None
-
-def watchdog():
-    """Notify the watchdog file to be used with the watchdog-device."""
-    if not path.isfile(WATCHDOG_PATH):
-        open(WATCHDOG_PATH, 'w').close()
-    else:
-        utime(WATCHDOG_PATH, None)
-
 
 def load_browser(url=None):
     global browser, current_browser_url
@@ -99,10 +89,9 @@ def view_video(uri, duration):
 
     run = sh.Command(player_args[0])(*player_args[1:], **player_kwargs)
 
-    browser_template('black');
+    browser_template('blank');
 
     while run.process.alive:
-        watchdog()
         sleep(1)
     if run.exit_code == 124:
         logging.error('omxplayer timed out')
@@ -137,7 +126,6 @@ def broadcast_loop(scheduler):
             return
 
     logging.info('Showing slide %s (%s)', type, load)
-    watchdog()
 
     if 'web' in type or 'image' in type:
         browser_url(load)

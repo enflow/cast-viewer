@@ -1,0 +1,51 @@
+- name: Copies network manger and watchdog
+  copy:
+    owner: root
+    group: root
+    mode: 0755
+    src: "{{ item }}"
+    dest: "/usr/sbin/{{ item }}"
+  with_items:
+    - cast_viewer_net_mgr.py
+    - cast_viewer_net_watchdog.py
+
+- name: Copies network manager unit file
+  copy:
+    owner: root
+    group: root
+    src: cast-viewer-net-manager.service
+    dest: /etc/systemd/system/cast-viewer-net-manager.service
+
+- name: Copies network watchdog service file
+  copy:
+    owner: root
+    group: root
+    src: cast-viewer-net-watchdog.service
+    dest: /etc/systemd/system/cast-viewer-net-watchdog.service
+
+- name: Copies network watchdog timer file
+  copy:
+    owner: root
+    group: root
+    src: cast-viewer-net-watchdog.timer
+    dest: /etc/systemd/system/cast-viewer-net-watchdog.timer
+
+- name: Copies in sample network.ini file
+  copy:
+    owner: root
+    group: root
+    mode: 0644
+    src: network.ini-sample
+    dest: /boot/network.ini
+
+- name: Activate network manager
+  command: systemctl enable cast-viewer-net-manager.service chdir=/etc/systemd/system
+
+- name: Activate network watchdog
+  command: systemctl enable cast-viewer-net-watchdog.timer chdir=/etc/systemd/system
+
+- name: Restart network services
+  command: /bin/true
+  notify:
+    - cast-viewer-net-manager
+    - cast-viewer-net-watchdog

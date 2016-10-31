@@ -17,6 +17,7 @@ class Scheduler(object):
         self.index = 0
         self.counter = 0
         self.downloader = downloader
+        self.state = self.STATE_NO_CONNECTION
 
     def fetch(self):
         logging.debug('Scheduler.fetch')
@@ -38,7 +39,7 @@ class Scheduler(object):
                 self.state=self.STATE_NO_CONNECTION if not self.slides else self.STATE_OK
 
         except requests.exceptions.ConnectionError as e:
-           logging.error('Loading from broadcast cache, ConnectionError: %s', e.args[0].reason.errno)
+           logging.error('Loading from broadcast cache, ConnectionError: %s', e)
 
     def update_slides(self, slides):
         self.downloader.download(slides)
