@@ -7,8 +7,8 @@
 
 - name: Copies in splash screen
   copy:
-    src: splashscreen.jpg
-    dest: /etc/splashscreen.jpg
+    src: splashscreen.png
+    dest: /etc/splashscreen.png
 
 - name: Copies in rc script
   copy:
