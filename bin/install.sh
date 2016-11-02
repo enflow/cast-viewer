@@ -50,7 +50,6 @@ echo "pi:$PASSWORD" | chpasswd
 
 echo "Installation completed."
 echo "Player identifies as $(hostname)"
-echo "Password has been set to $PASSWORD"
 echo -e ""
 
 read -p "Press any key to reboot... " -n1 -s

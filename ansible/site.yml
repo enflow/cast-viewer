@@ -6,6 +6,8 @@
   handlers:
     - name: restart-cast-viewer
       command: systemctl restart cast-viewer.service
+    - name: restart-ssh
+      service: name=ssh state=restarted
 
   roles:
     - system
