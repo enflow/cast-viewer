@@ -37,6 +37,7 @@
     mode: 0644
     src: network.ini-sample
     dest: /boot/network.ini
+    force: no
 
 - name: Activate network manager
   command: systemctl enable cast-viewer-net-manager.service chdir=/etc/systemd/system
