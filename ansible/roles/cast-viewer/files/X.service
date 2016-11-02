@@ -3,7 +3,7 @@ Description=X11
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/X
+ExecStart=/usr/bin/X -nocursor
 User=root
 Restart=on-failure
 

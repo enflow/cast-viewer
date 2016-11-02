@@ -25,7 +25,5 @@ ExecStartPre=/usr/bin/xset s noblank
 ExecStart=/usr/bin/python /home/pi/cast-viewer/viewer.py
 Restart=on-failure
 
-ExecStartPost=/bin/rm -f /tmp/uzbl_*
-
 [Install]
 WantedBy=multi-user.target
