@@ -64,7 +64,7 @@ def browser_url(url, force=False):
         logging.info('browser found dead, restarting')
         load_browser()
 
-    browser_send({'action': 'open', 'url': url})
+    browser_send({'action': 'open', 'url': url, 'force': force})
 
 
 def browser_preload(slide):

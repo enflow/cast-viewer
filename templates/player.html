@@ -82,7 +82,7 @@
                     log('Opening ' + data.url);
 
                     // Check if we aren't already active
-                    if ($('iframe.active').attr('src') == data.url) {
+                    if (!data.force && $('iframe.active').attr('src') == data.url) {
                         return;
                     }
 

@@ -141,7 +141,7 @@ if __name__ == '__main__':
             wifi_is_healthy = bring_up_interface(wifi_iface)
 
         if wifi_is_healthy:
-            reaches_internet = http_test('https://cast.enflow.nl')
+            reaches_internet = http_test('http://example.com')
             can_ping_gw = ping_test(get_default_gw())
 
         if reaches_internet or can_ping_gw:
