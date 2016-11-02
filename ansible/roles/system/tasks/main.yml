@@ -2,7 +2,10 @@
   script: set_hostname.sh
   changed_when: false
 
-- authorized_key: user=pi key="{{ lookup('file', '/home/pi/.ssh/id_rsa.pub') }}"
+- name: Set up authorized_keys for the pi user
+  authorized_key: user=pi key="{{ item }}"
+  with_file:
+    - id_rsa.pub
 
 - name: Disallow password authentication
   lineinfile: dest=/etc/ssh/sshd_config
