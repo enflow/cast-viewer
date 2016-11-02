@@ -45,18 +45,15 @@ def load_browser(url=None):
     browser = sh.Command('uzbl-browser')(print_events=True, config='-', uri=current_browser_url, _bg=True)
     logging.info('Browser loading %s. Running as PID %s.', current_browser_url, browser.pid)
 
-    browser_send('set ssl_verify = 1\nset show_status = 0\n')
+    browser_send('set ssl_verify = 1\nset show_status = 0\nset enable_spellcheck = 0')
 
 
-def browser_send(command, cb=lambda _: True):
+def browser_send(command):
     if not (browser is None) and browser.process.alive:
         while not browser.process._pipe_queue.empty():  # flush stdout
             browser.next()
 
         browser.process.stdin.put(command + '\n')
-        while True:  # loop until cb returns True
-            if cb(browser.next()):
-                break
     else:
         logging.info('browser found dead, restarting')
         load_browser()
@@ -74,7 +71,7 @@ def browser_url(url, force=False):
         logging.debug('Already showing %s, reloading it.', current_browser_url)
     else:
         current_browser_url = url
-        browser_send('uri ' + current_browser_url, cb=lambda buf: 'LOAD_FINISH' in buf)
+        browser_send('uri ' + current_browser_url)
         logging.info('current url is %s', current_browser_url)
 
 
