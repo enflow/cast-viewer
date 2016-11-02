@@ -41,14 +41,14 @@ def load_browser():
         browser.process.kill()
 
     command = sh.Command('chromium-browser')
-    browser = command('--kiosk', '--incognito', '--disable-translate', '--system-developer-mode', 'file://' + CWD + '/templates/player.html?debug=' + "1" if DEBUGGING else "0", _bg=True)
+    browser = command('--kiosk', '--incognito', '--disable-translate', '--system-developer-mode', 'file://' + CWD + '/www/player.html?debug=' + "1" if DEBUGGING else "0", _bg=True)
     logging.info('Browser loaded. Running as PID %s. Waiting 5 seconds to start.', browser.pid)
     sleep(5);
 
 
 def browser_template(template, params=[]):
     logging.debug('Browser template \'%s\' with params %s', template, params)
-    browser_url('file://{0}/templates/{1}.html?{2}'.format(CWD, template, urllib.urlencode(params, True)), force=True)
+    browser_url('file://{0}/www/{1}.html?{2}'.format(CWD, template, urllib.urlencode(params, True)), force=True)
 
 
 def browser_send(command):
@@ -177,7 +177,7 @@ def main():
     setup()
 
     downloader = Downloader()
-    scheduler = Scheduler(HOSTNAME, downloader)
+    scheduler = Scheduler(HOSTNAME)
 
     # scheduler.fetch()
     # for slide in scheduler.slides:
@@ -194,7 +194,10 @@ def main():
     logging.debug('Entering infinite loop.')
     while True:
         if scheduler.index is 0:
-            scheduler.fetch()
+            if scheduler.fetch():
+                browser_template('downloading')
+                downloader.download(scheduler.slides)
+
             logging.debug('Scheduler state: %s', scheduler.state)
 
         broadcast_loop(scheduler)

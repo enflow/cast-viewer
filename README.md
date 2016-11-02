@@ -19,3 +19,10 @@ This code is mostly based on the source provided by the lovely people at Screenl
 
 ## Development
 Enable debug mode when developing to receive all logging output to stdout: `touch /boot/debug`
+
+### Template editing
+Templates are generated with [Harp](http://harpjs.com/). This enabled template inherence and out of the box static asset generation.
+Recompile the templates by running:
+```bash
+harp compile templates
+```

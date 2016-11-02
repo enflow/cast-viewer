@@ -2,7 +2,6 @@
 
 import requests
 import logging
-import downloader
 from lib.config import get_player_identifier
 from lib.utils import get_git_tag
 
@@ -12,13 +11,12 @@ class Scheduler(object):
     STATE_NO_CONNECTION='NO_CONNECTION'
     STATE_EMPTY='EMPTY'
 
-    def __init__(self, hostname, downloader):
+    def __init__(self, hostname):
         logging.debug('Scheduler init')
         self.slides = None
         self.index = 0
         self.counter = 0
         self.hostname = hostname
-        self.downloader = downloader
         self.state = self.STATE_NO_CONNECTION
 
     def fetch(self):
@@ -32,20 +30,20 @@ class Scheduler(object):
             if r.status_code == 200:
                 if decoded_response == self.slides:
                     logging.debug('Broadcast response didn\'t change')
-                    return None
+                    return
 
-                self.update_slides(decoded_response['broadcast']['slides'] if decoded_response['broadcast'] else [])
+                slides = decoded_response['broadcast']['slides'] if decoded_response['broadcast'] else []
+                self.update_slides(slides)
+
+                return True if slides else None
             elif r.status_code == 201:
                 self.state=self.STATE_REQUIRES_SETUP
             else:
                 self.state=self.STATE_NO_CONNECTION if not self.slides else self.STATE_OK
-
         except requests.exceptions.ConnectionError as e:
            logging.error('Loading from broadcast cache, ConnectionError: %s', e)
 
     def update_slides(self, slides):
-        self.downloader.download(slides)
-
         self.slides = slides;
         self.state = self.STATE_EMPTY if not self.slides else self.STATE_OK
         self.reload()
