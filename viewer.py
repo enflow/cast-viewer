@@ -12,6 +12,9 @@ import sys
 import os
 import urllib
 import socket
+from websocket_server import WebsocketServer
+from threading import Thread
+import json
 
 from lib.downloader import Downloader
 from lib.scheduler import Scheduler
@@ -22,45 +25,25 @@ __license__ = "Dual License: GPLv2 and Commercial License"
 
 EMPTY_BROADCAST_DELAY = 10  # secs
 
-current_browser_url = None
 browser = None
-chromix_too_server = None
 downloader = None
+server = None
 
 CWD = None
 HOSTNAME = None
 
-def load_browser(url=None):
-    global browser, current_browser_url
+def load_browser():
+    global browser
     logging.info('Loading browser...')
 
     if browser:
         logging.info('killing previous browser %s', browser.pid)
         browser.process.kill()
 
-        if chromix_too_server:
-            chromix_too_server.process.kill()
-
-    if url is not None:
-        current_browser_url = url
-
-    # chromium-browser --kiosk --disable-translate --system-developer-mode --load-extension=/mnt/cast-viewer/extension_0_0_2/ --disable-session-crashed-bubble https://enflow.nl
-
-    command = sh.Command('chromix-too-server')
-    chromix_too_server = command(_bg=True)
-
     command = sh.Command('chromium-browser')
-    browser = command('--disable-translate', '--system-developer-mode', '--load-extension=/mnt/cast-viewer/extension_0_0_2/', current_browser_url, _bg=True)
-    logging.info('Browser loading %s. Running as PID %s.', current_browser_url, browser.pid)
-
-
-def browser_send(command):
-    if not (browser is None) and browser.process.alive:
-        logging.debug('Send to chromix-too: %s', command)
-        os.system('chromix-too {0}'.format(command) + ' &')
-    else:
-        logging.info('browser found dead, restarting')
-        load_browser()
+    browser = command('--kiosk', '--incognito', '--disable-translate', '--system-developer-mode', 'file:///mnt/cast-viewer/templates/player.html', _bg=True)
+    logging.info('Browser loaded. Running as PID %s. Waiting 5 seconds to start.', browser.pid)
+    sleep(5);
 
 
 def browser_template(template, params=[]):
@@ -68,19 +51,28 @@ def browser_template(template, params=[]):
     browser_url('file://{0}/templates/{1}.html?{2}'.format(CWD, template, urllib.urlencode(params, True)), force=True)
 
 
+def browser_send(command):
+    send = json.dumps(command);
+    server.send_message_to_all(send)
+    logging.info('sended %s', send)
+
+
 def browser_url(url, force=False):
-    global current_browser_url
+    global browser
 
-    if url == current_browser_url and not force:
-        logging.debug('Already showing %s, reloading it.', current_browser_url)
-    else:
-        if current_browser_url:
-            browser_send('close ' + current_browser_url)
+    if browser is None or not browser.process.alive:
+        logging.info('browser found dead, restarting')
+        load_browser()
 
-        current_browser_url = url
-        browser_send('open ' + current_browser_url)
-        logging.info('current url is %s', current_browser_url)
+    browser_send({'action': 'open', 'url': url})
 
+def browser_preload(slide):
+    if slide is None:
+        return
+
+    url = get_slide_url(slide)
+
+    browser_send({'action': 'preload', 'url': url})
 
 def view_video(uri, duration):
     logging.debug('Displaying video %s for %s ', uri, duration)
@@ -111,7 +103,7 @@ def broadcast_loop(scheduler):
         sleep(EMPTY_BROADCAST_DELAY)
         return
 
-    slide = scheduler.get_next_slide()
+    slide = scheduler.next_slide()
     logging.debug(slide)
 
     if slide is None:
@@ -119,27 +111,36 @@ def broadcast_loop(scheduler):
         sleep(EMPTY_BROADCAST_DELAY)
         return
 
-    type, load = slide['type'], slide['url']
-
-    if 'download_hash' in slide:
-        load = downloader.get_path_for_slide(slide)
-        if not os.path.isfile(load):
-            logging.info('Asset with download hash %s at %s is not available, skipping.', slide['download_hash'], slide['uri'])
-            sleep(0.5)
-            return
-
+    type, load = slide['type'], get_slide_url(slide)
     logging.info('Showing slide %s (%s)', type, load)
+
+    preloadableSlide = scheduler.slide_to_preload()
 
     if 'web' in type or 'image' in type:
         browser_url(load)
 
         duration = int(slide['duration'])
-        logging.info('Sleeping for %s', duration)
-        sleep(duration)
+
+        sleep(1)
+
+        # load next slide in advanced
+        browser_preload(preloadableSlide);
+
+        sleep(duration - 1)
     elif 'video' in type:
+        browser_preload(preloadableSlide);
+
         view_video(load, slide['duration'])
     else:
         logging.error('Unknown type %s', type)
+
+
+def get_slide_url(slide):
+    if 'download_hash' in slide:
+        return downloader.get_path_for_slide(slide)
+
+    return slide['url']
+
 
 def setup():
     global CWD, HOSTNAME
@@ -160,6 +161,12 @@ def setup():
     root.addHandler(ch)
 
 
+def websocket_server():
+    global server
+    server = WebsocketServer(13254, host='127.0.0.1')
+    server.run_forever()
+
+
 def main():
     global downloader
 
@@ -167,6 +174,18 @@ def main():
 
     downloader = Downloader()
     scheduler = Scheduler(HOSTNAME, downloader)
+
+    # scheduler.fetch()
+    # for slide in scheduler.slides:
+    #     current = scheduler.next_slide()
+    #     preload = scheduler.slide_to_preload()
+    #     logging.debug('current: ' + current['url'])
+    #     logging.debug('preload: ' + preload['url'])
+    #     logging.debug('')
+
+    t = Thread(target=websocket_server)
+    t.daemon = True
+    t.start()
 
     logging.debug('Entering infinite loop.')
     while True:
@@ -181,5 +200,5 @@ if __name__ == "__main__":
     try:
         main()
     except:
-        logging.exception("Viewer crashed.")
+        logging.exception("Cast viewer crashed.")
         raise
