@@ -50,8 +50,7 @@ class Scheduler(object):
         self.state = self.STATE_EMPTY if not self.slides else self.STATE_OK
         self.reload()
 
-    def get_next_slide(self):
-        logging.debug('Scheduler.get_next_slide')
+    def next_slide(self):
         if not self.slides:
             return None
 
@@ -60,6 +59,19 @@ class Scheduler(object):
         logging.debug('get_next_slide counter %s returning slide %s of %s', self.counter, idx + 1, len(self.slides))
         self.counter += 1
         return self.slides[idx]
+
+    def slide_to_preload(self):
+        if not self.slides:
+            return None
+
+        for x in range(0, len(self.slides)):
+            idx = (self.index + x) % len(self.slides)
+            slide = self.slides[idx]
+
+            if 'web' in slide['type'] or 'image' in slide['type']:
+                return slide
+
+        return None
 
     def reload(self):
         logging.debug('Scheduler.reload')

@@ -75,7 +75,7 @@
     - python-simplejson
     - rpi-update
     - systemd
-    - uzbl
+    - chromium-browser
     - x11-xserver-utils
     - xserver-xorg
     - htop
