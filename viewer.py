@@ -24,6 +24,7 @@ EMPTY_BROADCAST_DELAY = 10  # secs
 
 current_browser_url = None
 browser = None
+chromix_too_server = None
 downloader = None
 
 CWD = None
@@ -34,29 +35,29 @@ def load_browser(url=None):
     logging.info('Loading browser...')
 
     if browser:
-        logging.info('killing previous uzbl %s', browser.pid)
+        logging.info('killing previous browser %s', browser.pid)
         browser.process.kill()
+
+        if chromix_too_server:
+            chromix_too_server.process.kill()
 
     if url is not None:
         current_browser_url = url
 
-    # --config=-       read commands (and config) from stdin
-    # --print-events   print events to stdout
-    browser = sh.Command('uzbl-browser')(print_events=True, config='-', uri=current_browser_url, _bg=True)
+    # chromium-browser --kiosk --disable-translate --system-developer-mode --load-extension=/mnt/cast-viewer/extension_0_0_2/ --disable-session-crashed-bubble https://enflow.nl
+
+    command = sh.Command('chromix-too-server')
+    chromix_too_server = command(_bg=True)
+
+    command = sh.Command('chromium-browser')
+    browser = command('--disable-translate', '--system-developer-mode', '--load-extension=/mnt/cast-viewer/extension_0_0_2/', current_browser_url, _bg=True)
     logging.info('Browser loading %s. Running as PID %s.', current_browser_url, browser.pid)
 
-    browser_send('set ssl_verify = 1\nset show_status = 0\n')
 
-
-def browser_send(command, cb=lambda _: True):
+def browser_send(command):
     if not (browser is None) and browser.process.alive:
-        while not browser.process._pipe_queue.empty():  # flush stdout
-            browser.next()
-
-        browser.process.stdin.put(command + '\n')
-        while True:  # loop until cb returns True
-            if cb(browser.next()):
-                break
+        logging.debug('Send to chromix-too: %s', command)
+        os.system('chromix-too {0}'.format(command) + ' &')
     else:
         logging.info('browser found dead, restarting')
         load_browser()
@@ -73,8 +74,11 @@ def browser_url(url, force=False):
     if url == current_browser_url and not force:
         logging.debug('Already showing %s, reloading it.', current_browser_url)
     else:
+        if current_browser_url:
+            browser_send('close ' + current_browser_url)
+
         current_browser_url = url
-        browser_send('uri ' + current_browser_url, cb=lambda buf: 'LOAD_FINISH' in buf)
+        browser_send('open ' + current_browser_url)
         logging.info('current url is %s', current_browser_url)
 
 
@@ -89,8 +93,6 @@ def view_video(uri, duration):
         player_args = ['timeout', duration] + player_args
 
     run = sh.Command(player_args[0])(*player_args[1:], **player_kwargs)
-
-    browser_template('blank');
 
     while run.process.alive:
         sleep(1)
