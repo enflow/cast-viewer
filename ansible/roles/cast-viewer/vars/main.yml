@@ -1,3 +1,4 @@
 cast_viewer_systemd_units:
   - X.service
+  - matchbox.service
   - cast-viewer.service

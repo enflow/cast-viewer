@@ -4,3 +4,4 @@ requests==2.10.0
 sh==1.08
 certifi==2016.9.26
 pytz==2012d
+websocket-server==0.4

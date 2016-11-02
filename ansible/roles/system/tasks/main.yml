@@ -45,9 +45,6 @@
     dest: /boot/cmdline.txt.orig
     force: no
 
-- debug:
-    msg: "Use cmdline.txt.orig for boot parameters (don't remove this file)"
-
 - copy:
     src: /boot/cmdline.txt.orig
     dest: /boot/cmdline.txt

@@ -29,6 +29,8 @@ sudo pip install ansible==2.1.0.0
 
 git clone https://github.com/enflow-nl/cast-viewer.git /home/pi/cast-viewer
 cd /home/pi/cast-viewer
+chown -R pi:pi *
+
 LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
 git checkout $LATEST_TAG
 
