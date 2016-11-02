@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-if [ "$HOSTNAME" = "raspberrypi" ]
+if [ `hostname` = "raspberrypi" ]
 then
     IDENTIFIER=$(cat /dev/urandom | tr -dc 'A-Z0-9' | fold -w 10 | head -n 1)
 
