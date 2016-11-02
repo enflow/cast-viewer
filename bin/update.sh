@@ -25,6 +25,8 @@ git checkout $LATEST_TAG
 cd /home/pi/cast-viewer/ansible
 ansible-playbook site.yml
 
+systemctl restart cast-viewer.service
+
 set +x
 set +e
 
