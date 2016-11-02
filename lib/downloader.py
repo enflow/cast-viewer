@@ -5,6 +5,7 @@ import os
 import glob
 import logging
 from lib.utils import download_with_progress
+from lib.utils import md5
 
 class Downloader(object):
     def __init__(self):
@@ -20,11 +21,13 @@ class Downloader(object):
         for slide in slides_to_download:
             path = self.get_path_for_slide(slide)
 
-            if os.path.isfile(path):
-                logging.debug('Loaded download from cache: %s', path)
-                continue
+            if not os.path.isfile(path):
+                download_with_progress(path, slide['url'])
 
-            download_with_progress(path, slide['url'])
+            md5_on_filesystem = md5(path)
+            if md5_on_filesystem != slide['download_hash']:
+                logging.error('Downloaded file hashes don\'t match. Removing file. %s != %s', md5_on_filesystem, slide['download_hash'])
+                os.remove(path)
 
 
     def remove_unused(self, slides_to_download):

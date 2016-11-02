@@ -78,6 +78,7 @@
     - uzbl
     - x11-xserver-utils
     - xserver-xorg
+    - htop
 
 - name: Perform system upgrade
   apt:

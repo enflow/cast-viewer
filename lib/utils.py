@@ -7,6 +7,7 @@ from urlparse import urlparse
 import pytz
 import sys
 import sh
+import hashlib
 
 HTTP_OK = xrange(200, 299)
 
@@ -48,3 +49,11 @@ def download_with_progress(file_name, url):
 def get_git_tag():
     commit = sh.git("rev-list", "--tags", "--max-count=1").rstrip()
     return sh.git("describe", "--tags", commit).rstrip()
+
+
+def md5(fname):
+    hash_md5 = hashlib.md5()
+    with open(fname, "rb") as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            hash_md5.update(chunk)
+    return hash_md5.hexdigest()

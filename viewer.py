@@ -122,7 +122,7 @@ def broadcast_loop(scheduler):
     if 'download_hash' in slide:
         load = downloader.get_path_for_slide(slide)
         if not os.path.isfile(load):
-            logging.info('Asset with download hash %s at %s is not available, skipping.', slide['download_hash'], slide['uri'])
+            logging.info('Asset with download hash %s at %s is not available, skipping.', slide['download_hash'], load)
             sleep(0.5)
             return
 
