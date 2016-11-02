@@ -1,3 +1,7 @@
+- name: Set hostname / player identifier
+  script: set_hostname.sh
+  changed_when: false
+
 - name: Make sure we have proper framebuffer depth
   lineinfile:
     dest: /boot/config.txt
@@ -9,6 +13,12 @@
     dest: /boot/config.txt
     regexp: ^framebuffer_ignore_alpha=
     line: framebuffer_ignore_alpha=1
+
+- name: Make sure we have enough GPU memory
+  lineinfile:
+    dest: /boot/config.txt
+    regexp: ^gpu_mem=
+    line: gpu_mem=128
 
 - name: Backup kernel boot args
   copy:

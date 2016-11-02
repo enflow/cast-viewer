@@ -1,7 +1,3 @@
-- name: Set hostname / player identifier
-  script: set_hostname.sh
-  changed_when: false
-
 - name: Copies network manger and watchdog
   copy:
     owner: root
