@@ -17,3 +17,10 @@
 ;[wlan0]
 ;ssid=NameOfYourNetwork
 ;passphrase=YourNetworkPassword
+
+
+; Connect to a Hamachi network.
+; Only invite-only networks are supported at the moment.
+
+[hamachi]
+network=355-241-176

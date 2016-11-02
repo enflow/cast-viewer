@@ -100,6 +100,19 @@ def get_active_iface(config, prefix):
     return False
 
 
+def hamachi(network_id):
+    logging.info('Setting up hamachi network %s', network_id)
+
+    sh.hamachi('login', _ok_code=[0,1])
+
+    list = sh.hamachi('list').rstrip()
+    logging.info('Hamachi list: \'%s\'', list)
+
+    if network_id not in list:
+        logging.info('Joining network %s', network_id)
+        sh.hamachi('do-join', network_id, '""')
+
+
 if __name__ == '__main__':
     logging.info('Starting net_watchdog.')
 
@@ -135,3 +148,6 @@ if __name__ == '__main__':
             logging.info('WiFi interface is healthy.')
         else:
             logging.error('Unable to connect to internet or gateway.')
+
+    if config.has_section('hamachi'):
+        hamachi(config.get('hamachi', 'network'))
