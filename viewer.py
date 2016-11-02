@@ -147,15 +147,15 @@ def setup():
     if HOSTNAME == 'raspberrypi':
         raise RuntimeError('Hostname still is set to the default "raspberrypi". Unable to identiy with that.')
 
-    # output logs to stdout
-    root = logging.getLogger()
-    root.setLevel(logging.DEBUG)
+    if os.path.isfile('/boot/debug'):
+        root = logging.getLogger()
+        root.setLevel(logging.DEBUG)
 
-    ch = logging.StreamHandler(sys.stdout)
-    ch.setLevel(logging.DEBUG)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    ch.setFormatter(formatter)
-    root.addHandler(ch)
+        ch = logging.StreamHandler(sys.stdout)
+        ch.setLevel(logging.DEBUG)
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        ch.setFormatter(formatter)
+        root.addHandler(ch)
 
 
 def main():

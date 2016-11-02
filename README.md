@@ -16,3 +16,6 @@ This code is mostly based on the source provided by the lovely people at Screenl
 - Removed the `image` asset
 - Renamed `assets` to `slides`
 - Added templates for setup etc.
+
+## Development
+Enable debug mode when developing to receive all logging output to stdout: `touch /boot/debug`

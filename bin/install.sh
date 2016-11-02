@@ -44,7 +44,15 @@ sudo rm -rf /usr/share/man /usr/share/groff /usr/share/info /usr/share/lintian /
 sudo find /usr/share/locale -type f ! -name 'en' ! -name 'de*' ! -name 'es*' ! -name 'ja*' ! -name 'fr*' ! -name 'zh*' -delete
 sudo find /usr/share/locale -mindepth 1 -maxdepth 1 ! -name 'en*' ! -name 'de*' ! -name 'es*' ! -name 'ja*' ! -name 'fr*' ! -name 'zh*' -exec rm -r {} \;
 
-echo "Installation completed. Rebooting in 5 seconds"
+PASSWORD=`head /dev/urandom | tr -dc A-Za-z0-9 | head -c 13 ; echo ''`
+echo "$PASSWORD" > /boot/password.txt
+echo "pi:$PASSWORD" | chpasswd
 
-sleep 5
+echo "Installation completed."
+echo "Player identifies as $(hostname)"
+echo "Password has been set to $PASSWORD"
+echo -e ""
+
+read -p "Press any key to reboot... " -n1 -s
+echo -e ""
 reboot
