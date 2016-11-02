@@ -37,7 +37,7 @@ def http_test(host):
     if 200 <= r.status_code < 400:
         return True
     else:
-        logging.error('Unable to reach Screenly.')
+        logging.error('Unable to reach Cast viewer.')
         return False
 
 
