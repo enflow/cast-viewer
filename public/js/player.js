@@ -25,7 +25,7 @@ $(function () {
         $inactive.addClass('active');
     };
 
-    var ws = new WebSocket("ws://127.0.0.1:13254/");
+    var ws = new ReconnectingWebSocket("ws://127.0.0.1:13254/");
 
     ws.onopen = function (evt) {
         log('Opening connection');

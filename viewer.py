@@ -41,7 +41,7 @@ def load_browser():
         browser.process.kill()
 
     command = sh.Command('chromium-browser')
-    browser = command('--kiosk', '--incognito', '--disable-translate', '--system-developer-mode', 'file://' + CWD + '/www/player.html?debug=' + "1" if DEBUGGING else "0", _bg=True)
+    browser = command('--kiosk', '--incognito', '--disable-translate', '--system-developer-mode', 'file://' + CWD + '/www/player.html?debug=' + ("1" if DEBUGGING else "0"), _bg=True)
     logging.info('Browser loaded. Running as PID %s. Waiting 5 seconds to start.', browser.pid)
     sleep(5);
 
@@ -179,14 +179,6 @@ def main():
     downloader = Downloader()
     scheduler = Scheduler(HOSTNAME)
 
-    # scheduler.fetch()
-    # for slide in scheduler.slides:
-    #     current = scheduler.next_slide()
-    #     preload = scheduler.slide_to_preload()
-    #     logging.debug('current: ' + current['url'])
-    #     logging.debug('preload: ' + preload['url'])
-    #     logging.debug('')
-
     t = Thread(target=websocket_server)
     t.daemon = True
     t.start()
@@ -195,7 +187,7 @@ def main():
     while True:
         if scheduler.index is 0:
             if scheduler.fetch():
-                browser_template('downloading')
+                browser_template('loading')
                 downloader.download(scheduler.slides)
 
             logging.debug('Scheduler state: %s', scheduler.state)

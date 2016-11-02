@@ -28,11 +28,12 @@ class Scheduler(object):
             logging.debug('Status code %s with response %s', r.status_code, decoded_response);
 
             if r.status_code == 200:
-                if decoded_response == self.slides:
+                slides = decoded_response['broadcast']['slides'] if decoded_response['broadcast'] else []
+
+                if slides == self.slides:
                     logging.debug('Broadcast response didn\'t change')
                     return
 
-                slides = decoded_response['broadcast']['slides'] if decoded_response['broadcast'] else []
                 self.update_slides(slides)
 
                 return True if slides else None
