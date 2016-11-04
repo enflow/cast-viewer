@@ -6,14 +6,15 @@ from os import path, getenv, utime
 from random import shuffle
 from time import sleep
 from json import load as json_load
+from websocket_server import WebsocketServer
+from threading import Thread
+from lib.system import is_under_voltage
 import logging
 import sh
 import sys
 import os
 import urllib
 import socket
-from websocket_server import WebsocketServer
-from threading import Thread
 import json
 
 from lib.downloader import Downloader
@@ -182,6 +183,10 @@ def main():
     t = Thread(target=websocket_server)
     t.daemon = True
     t.start()
+
+    if is_under_voltage():
+        browser_template('under_voltage')
+        sleep(3 if DEBUGGING else 60)
 
     logging.debug('Entering infinite loop.')
     while True:

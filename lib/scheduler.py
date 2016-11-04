@@ -2,8 +2,9 @@
 
 import requests
 import logging
+import json
 from lib.config import get_player_identifier
-from lib.utils import get_git_tag
+from lib.system import get_status
 
 class Scheduler(object):
     STATE_OK='OK'
@@ -23,7 +24,10 @@ class Scheduler(object):
         logging.debug('Scheduler.fetch')
 
         try:
-            r = requests.get('https://cast.enflow.nl/api/v1/player/{0}?version={1}'.format(self.hostname, get_git_tag()))
+            status = get_status()
+            print json.dumps(status)
+
+            r = requests.get('https://cast.enflow.nl/api/v1/player/{0}'.format(self.hostname), {'status': json.dumps(status)})
             decoded_response = r.json()
             logging.debug('Status code %s with response %s', r.status_code, decoded_response);
 

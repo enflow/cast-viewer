@@ -39,6 +39,12 @@
     regexp: ^gpu_mem=
     line: gpu_mem=128
 
+- name: Hide voltage and temperature
+  lineinfile:
+    dest: /boot/config.txt
+    regexp: ^avoid_warnings=
+    line: avoid_warnings=1
+
 - name: Backup kernel boot args
   copy:
     src: /boot/cmdline.txt
@@ -77,10 +83,16 @@
     - xserver-xorg
     - htop
     - ufw
+    - cec-utils
 
 - name: Perform system upgrade
   apt:
     upgrade: dist
+  tags:
+    - system-upgrade
+
+- name: Perform RPI update
+  command: /usr/bin/rpi-update
   tags:
     - system-upgrade
 

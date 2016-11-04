@@ -5,12 +5,6 @@ if [ "$EUID" -ne 0 ]
   exit
 fi
 
-echo && read -p "Would you like to perform a full system upgrade as well? (y/N)" -n 1 -r -s UPGRADE && echo
-EXTRA_ARGS=""
-if [ "$UPGRADE" != 'y' ]; then
-  EXTRA_ARGS="--skip-tags system-upgrade"
-fi
-
 set -x
 sudo mkdir -p /etc/ansible
 echo -e "[local]\nlocalhost ansible_connection=local" | sudo tee /etc/ansible/hosts > /dev/null
