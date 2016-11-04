@@ -12,31 +12,29 @@ img {
     height: auto
 }
 
-.header {
-    padding: 1.5625vw 2.60417vw
-}
-
-.header .logo svg {
-    width: 10.41667vw;
-    max-height: 5.20833vw;
-    max-width: 15.625vw;
-    display: block;
-}
-
 .content {
     width: 100%;
     height: 100vh;
-    padding: 2.08333vw 2.60417vw;
-    background: #2c3e50;
-    text-align: center;
+    background: #2f3134;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo {
+    position: absolute;
+    bottom: 60px;
+    right: 60px;
+}
+
+.logo svg {
+    width: 10.41667vw;
+    max-height: 5.20833vw;
+    max-width: 15.625vw;
+    display: block
 }
 
 h1 {
-    color: #fff;
-    margin: 0 0 1.5625vw;
-    font-size: 4.6875vw
-}
-
-p {
-    margin: 0 0 1.5625vw
+    color:#fff;
+    font-size:4.6875vw
 }
