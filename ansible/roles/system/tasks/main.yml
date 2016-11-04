@@ -76,6 +76,7 @@
     - x11-xserver-utils
     - xserver-xorg
     - htop
+    - ufw
 
 - name: Perform system upgrade
   apt:

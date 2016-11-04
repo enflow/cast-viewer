@@ -41,7 +41,7 @@ def load_browser():
         browser.process.kill()
 
     command = sh.Command('chromium-browser')
-    browser = command('--kiosk', '--incognito', '--disable-translate', '--system-developer-mode', 'file://' + CWD + '/www/player.html?debug=' + ("1" if DEBUGGING else "0"), _bg=True)
+    browser = command('--kiosk', '--incognito', '--no-first-run', '--disable-translate', '--system-developer-mode', 'file://' + CWD + '/www/player.html?debug=' + ("1" if DEBUGGING else "0"), _bg=True)
     logging.info('Browser loaded. Running as PID %s. Waiting 5 seconds to start.', browser.pid)
     sleep(5);
 

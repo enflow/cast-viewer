@@ -54,3 +54,9 @@
   notify:
     - cast-viewer-net-manager
     - cast-viewer-net-watchdog
+
+- name: Allow SSH
+  ufw: rule=allow port=22 proto=tcp
+
+- name: Set firewall default policy
+  ufw: state=enabled policy=reject

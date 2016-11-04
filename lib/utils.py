@@ -46,6 +46,7 @@ def download_with_progress(file_name, url):
                 sys.stdout.write("\r[%s%s]" % ('=' * done, ' ' * (50-done)) )
                 sys.stdout.flush()
 
+
 def get_git_tag():
     commit = sh.git("rev-list", "--tags", "--max-count=1").rstrip()
     return sh.git("describe", "--tags", commit).rstrip()
