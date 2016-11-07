@@ -6,6 +6,11 @@
   handlers:
     - name: restart-cast-viewer
       command: systemctl restart cast-viewer.service
+    - name: restart-x-server
+      command: "systemctl restart {{ item }}"
+      with_items:
+      - X.service
+      - matchbox.service
     - name: restart-ssh
       service: name=ssh state=restarted
 
