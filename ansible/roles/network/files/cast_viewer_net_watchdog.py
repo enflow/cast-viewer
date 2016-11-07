@@ -103,19 +103,17 @@ def get_active_iface(config, prefix):
 def hamachi(network_id):
     logging.info('Setting up hamachi network %s', network_id)
 
-    sh.hamachi('login', _ok_code=[0,1])
+    sh.hamachi('login', timeout=15, _ok_code=[0,1])
 
     list = sh.hamachi('list').rstrip()
     logging.info('Hamachi list: \'%s\'', list)
 
     if network_id not in list:
         logging.info('Joining network %s', network_id)
-        sh.hamachi('do-join', network_id, '""')
+        logging.info(sh.hamachi('do-join', network_id, '""').rtrim())
 
 
 if __name__ == '__main__':
-    logging.info('Starting net_watchdog.')
-
     config = configparser.ConfigParser()
     config.read(NETWORK_PATH)
 
@@ -123,6 +121,7 @@ if __name__ == '__main__':
 
     can_ping_gw = None
     reaches_internet = None
+    wifi_has_ip = False
 
     if wifi_iface:
         logging.info('Found wifi interface {}'.format(wifi_iface))
@@ -150,4 +149,7 @@ if __name__ == '__main__':
             logging.error('Unable to connect to internet or gateway.')
 
     if config.has_section('hamachi'):
+        if wifi_has_ip and has_ip('eth0'):
+            logging.error('Unable to launch hamachi. Both wlan0 and eth0 are connected')
+
         hamachi(config.get('hamachi', 'network'))

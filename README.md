@@ -22,7 +22,7 @@ Enable debug mode when developing to receive all logging output to stdout: `touc
 
 ### Template editing
 Templates are generated with [Harp](http://harpjs.com/). This enabled template inherence and out of the box static asset generation.
-Recompile the templates by running:
+Recompile the templates by running in the project directory:
 ```bash
-harp compile templates
+harp compile
 ```
