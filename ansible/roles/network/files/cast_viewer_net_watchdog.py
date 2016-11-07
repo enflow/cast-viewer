@@ -103,14 +103,14 @@ def get_active_iface(config, prefix):
 def hamachi(network_id):
     logging.info('Setting up hamachi network %s', network_id)
 
-    sh.hamachi('login', timeout=15, _ok_code=[0,1])
+    sh.hamachi('login', _timeout=15, _ok_code=[0,1])
 
     list = sh.hamachi('list').rstrip()
     logging.info('Hamachi list: \'%s\'', list)
 
     if network_id not in list:
         logging.info('Joining network %s', network_id)
-        logging.info(sh.hamachi('do-join', network_id, '""').rtrim())
+        logging.info(sh.hamachi('do-join', network_id, '""').rstrip())
 
 
 if __name__ == '__main__':

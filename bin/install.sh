@@ -5,7 +5,9 @@ if [ "$EUID" -ne 0 ]
   exit
 fi
 
+set -e
 set -x
+
 sudo mkdir -p /etc/ansible
 echo -e "[local]\nlocalhost ansible_connection=local" | sudo tee /etc/ansible/hosts > /dev/null
 
@@ -15,11 +17,13 @@ if [ ! -f /etc/locale.gen ]; then
   sudo locale-gen
 fi
 
-sudo apt-get update
-sudo apt-get purge -y python-setuptools python-pip python-pyasn1
-sudo apt-get install -y python-dev git-core libffi-dev libssl-dev
+sudo apt update
+sudo apt purge -y python-setuptools python-pip python-pyasn1
+sudo apt install -y python-dev git-core libffi-dev libssl-dev
 curl -s https://bootstrap.pypa.io/get-pip.py | sudo python
 sudo pip install ansible==2.1.0.0
+
+
 
 git clone https://github.com/enflow-nl/cast-viewer.git /home/pi/cast-viewer
 cd /home/pi/cast-viewer
