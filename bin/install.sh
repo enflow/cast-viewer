@@ -8,6 +8,18 @@ fi
 set -e
 set -x
 
+if [ ! -f /usr/bin/rpi-update ]; then
+    sudo apt update
+    sudo apt install -y rpi-update
+    sudo /usr/bin/rpi-update
+
+    read -p "Press any key to reboot to apply updated firmware... " -n1 -s
+    echo -e ""
+    reboot
+
+    exit
+fi
+
 sudo mkdir -p /etc/ansible
 echo -e "[local]\nlocalhost ansible_connection=local" | sudo tee /etc/ansible/hosts > /dev/null
 
@@ -17,13 +29,10 @@ if [ ! -f /etc/locale.gen ]; then
   sudo locale-gen
 fi
 
-sudo apt update
 sudo apt purge -y python-setuptools python-pip python-pyasn1
 sudo apt install -y python-dev git-core libffi-dev libssl-dev
 curl -s https://bootstrap.pypa.io/get-pip.py | sudo python
 sudo pip install ansible==2.1.0.0
-
-
 
 git clone https://github.com/enflow-nl/cast-viewer.git /home/pi/cast-viewer
 cd /home/pi/cast-viewer
