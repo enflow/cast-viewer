@@ -137,7 +137,7 @@ if __name__ == '__main__':
     reaches_internet = None
     wifi_has_ip = False
 
-    if wifi_iface:
+    if not has_ip('eth0') and wifi_iface:
         logging.info('Found wifi interface {}'.format(wifi_iface))
         wifi_is_static = is_static(config, wifi_iface)
         wifi_is_healthy = None
