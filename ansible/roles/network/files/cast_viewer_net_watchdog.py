@@ -9,6 +9,7 @@ import socket
 import sys
 import time
 import logging
+from time import sleep
 
 NETWORK_PATH = '/boot/network.ini'
 
@@ -41,14 +42,18 @@ def http_test(host):
         return False
 
 
+def restart_networking():
+    networking = sh.Command('/etc/init.d/networking')
+    networking('restart')
+
+
 def restart_interface(interface):
     logging.info('Restarting network interface.')
 
     ifdown = sh.Command('/sbin/ifdown')
     ifdown('--force', interface)
 
-    networking = sh.Command('/etc/init.d/networking')
-    networking('restart')
+    restart_networking()
 
 
 def is_static(config, interface):
@@ -70,6 +75,15 @@ def bring_up_interface(interface):
             time.sleep(15)
     logging.error('Unable to bring up network interface.')
     return False
+
+
+def bring_down_interface(interface):
+    logging.info('Bringing down interface %s', interface)
+
+    ifdown = sh.Command('/sbin/ifconfig')
+    ifdown('wlan0', 'down')
+
+    restart_networking()
 
 
 def has_ip(interface):
@@ -148,8 +162,14 @@ if __name__ == '__main__':
         else:
             logging.error('Unable to connect to internet or gateway.')
 
-    if config.has_section('hamachi'):
-        if wifi_has_ip and has_ip('eth0'):
-            logging.error('Unable to launch hamachi. Both wlan0 and eth0 are connected')
 
+    if has_ip('wlan0') and has_ip('eth0'):
+        bring_down_interface('wlan0')
+
+        logging.info('Restarting logmein-hamachi daemon due to network change')
+        os.system('/etc/init.d/logmein-hamachi restart')
+        sleep(2) # wait for the daemon to 'really' start
+
+
+    if config.has_section('hamachi'):
         hamachi(config.get('hamachi', 'network'))

@@ -10,6 +10,7 @@ class Scheduler(object):
     STATE_OK='OK'
     STATE_REQUIRES_SETUP='REQUIRES_SETUP'
     STATE_NO_CONNECTION='NO_CONNECTION'
+    STATE_INTERNAL_SERVER_ERROR='INTERNAL_SERVER_ERROR'
     STATE_EMPTY='EMPTY'
 
     def __init__(self, hostname):
@@ -43,6 +44,8 @@ class Scheduler(object):
                 return True if slides else None
             elif r.status_code == 201:
                 self.state=self.STATE_REQUIRES_SETUP
+            elif r.status_code == 500:
+                self.state=self.STATE_INTERNAL_SERVER_ERROR if not self.slides else self.STATE_OK
             else:
                 self.state=self.STATE_NO_CONNECTION if not self.slides else self.STATE_OK
         except requests.exceptions.ConnectionError as e:

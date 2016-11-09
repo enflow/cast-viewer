@@ -106,6 +106,11 @@ def broadcast_loop(scheduler):
         sleep(EMPTY_BROADCAST_DELAY)
         return
 
+    if scheduler.state == scheduler.STATE_INTERNAL_SERVER_ERROR:
+        browser_template('internal_server_error')
+        sleep(EMPTY_BROADCAST_DELAY)
+        return
+
     slide = scheduler.next_slide()
     logging.debug(slide)
 
