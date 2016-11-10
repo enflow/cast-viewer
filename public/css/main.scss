@@ -39,9 +39,30 @@ h1 {
     color: #fff;
     font-size: 5vw;
     margin-top: 0;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+
+    &.setup {
+        margin-bottom: 0;
+        padding: 0 4vw 4vw;
+        text-align: center;
+    }
+
+    &.setup-identifier {
+        background: #fff;
+        color: #2f3134;
+        padding: 22px 50px;
+        letter-spacing: 25px;
+        font-size: 5vw;
+        border-radius: 98px;
+    }
 }
 
-h2 {
+p {
     font-size: 2vw;
     margin-top: 0;
+
+    span {
+        font-style: italic;
+    }
 }
