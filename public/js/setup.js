@@ -5,7 +5,8 @@ function getParameterByName(name) {
 
 window.onload = function () {
     var playerIdentifier = document.getElementById('player-identifier');
-    if (playerIdentifier) {
-        playerIdentifier.innerHTML = getParameterByName('player_identifier');
+    var playerIdentifierValue = getParameterByName('player_identifier');
+    if (playerIdentifier && playerIdentifierValue) {
+        playerIdentifier.innerHTML = playerIdentifierValue;
     }
 };

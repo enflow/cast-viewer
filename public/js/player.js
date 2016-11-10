@@ -64,11 +64,9 @@ $(function () {
             if (isInactiveApplicable(data.url)) {
                 // In most cases, when 2 preloads are send a video or other kind of slide is inbetween
                 // Due to the way videos are played, the preload is send first, and then the video starts playing
-                // To prevent a ugly preload flash (i.e. you see the page after the video first)
-                // we add a very hacky timeout
-                setTimeout(function () {
-                    setInactiveActive();
-                }, 1000);
+                // To prevent a ugly preload flash (i.e. you see the next page before the video starts playing)
+                // we add a very hacky timeout to ensure the preload happens in the background
+                setTimeout(setInactiveActive, 1000);
                 return;
             }
 
