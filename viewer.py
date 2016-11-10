@@ -125,7 +125,7 @@ def broadcast_loop(scheduler):
 
     preloadableSlide = scheduler.slide_to_preload()
 
-    if 'web' in type or 'image' in type:
+    if 'web' in type:
         browser_url(load)
 
         duration = int(slide['duration'])
