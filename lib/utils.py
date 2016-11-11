@@ -12,19 +12,6 @@ import hashlib
 HTTP_OK = xrange(200, 299)
 
 def validate_url(string):
-    """Simple URL verification.
-    >>> validate_url("hello")
-    False
-    >>> validate_url("ftp://example.com")
-    False
-    >>> validate_url("http://")
-    False
-    >>> validate_url("http://wireload.net/logo.png")
-    True
-    >>> validate_url("https://wireload.net/logo.png")
-    True
-    """
-
     checker = urlparse(string)
     return bool(checker.scheme in ('http', 'https') and checker.netloc)
 
