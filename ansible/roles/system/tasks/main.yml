@@ -39,6 +39,12 @@
     regexp: ^gpu_mem=
     line: gpu_mem=128
 
+- name: Always enable HDMI
+  lineinfile:
+    dest: /boot/config.txt
+    regexp: ^hdmi_force_hotplug=
+    line: hdmi_force_hotplug=1
+
 - name: Hide voltage and temperature
   lineinfile:
     dest: /boot/config.txt

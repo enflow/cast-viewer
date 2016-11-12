@@ -14,7 +14,7 @@ def get_status():
         'is_under_voltage': is_under_voltage(throttled),
         'temp': vcgencmd('measure_temp').rstrip().replace('temp=', ''),
         'firmware': vcgencmd('version').split('\n'),
-        'cec': [i for i in sh.cec_client('-s', d=1, _in='pow 0').split('\n') if i][-1],
+        'cec': get_cec(),
         'load': os.getloadavg(),
         'uptime': get_uptime()
     }
@@ -34,6 +34,9 @@ def is_under_voltage(throttled=None):
 def get_git_tag():
     commit = sh.git("rev-list", "--tags", "--max-count=1").rstrip()
     return sh.git("describe", "--tags", commit).rstrip()
+
+def get_cec():
+    return [i for i in sh.cec_client('-s', d=1, _in='pow 0', _ok_code=[0,1]).split('\n') if i][-1]
 
 def get_uptime():
     with open('/proc/uptime', 'r') as f:

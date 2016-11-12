@@ -17,7 +17,7 @@ Environment=PYTHONPATH=/home/pi/cast-viewer
 ExecStartPre=/usr/bin/xset s off
 
 # Disable DPMS (Energy Star) features
-ExecStartPre=/usr/bin/xset dpms 0 0 0
+ExecStartPre=/usr/bin/xset dpms 0 0 0 && /usr/bin/xset -dpms
 
 # Don't blank the video device
 ExecStartPre=/usr/bin/xset s noblank
