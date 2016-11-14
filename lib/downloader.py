@@ -4,6 +4,7 @@ import sys
 import os
 import glob
 import logging
+import sh
 from lib.utils import download_with_progress
 from lib.utils import md5
 
@@ -24,16 +25,16 @@ class Downloader(object):
             if not os.path.isfile(path):
                 download_with_progress(path, slide['url'])
 
-            md5_on_filesystem = md5(path)
-            if md5_on_filesystem != slide['download_hash']:
-                logging.error('Downloaded file hashes don\'t match. Removing file. %s != %s', md5_on_filesystem, slide['download_hash'])
+            # hacky way to validate if the MP4 is not corrupt
+            mediainfo = sh.mediainfo(path).rstrip()
+            if "Codec ID/Info" not in mediainfo:
+                logging.error('Downloaded file doesn\'t look like a valid mp4 file: %s', slide['url'])
                 os.remove(path)
-
 
     def remove_unused(self, slides_to_download):
         download_hashes = []
         for slide in slides_to_download:
-            download_hashes.append(slide['download_hash'])
+            download_hashes.append(md5(slide['url']))
 
         for path in glob.glob(self.get_directory() + '/*'):
             filename = os.path.basename(path)
@@ -43,13 +44,13 @@ class Downloader(object):
 
 
     def get_path_for_slide(self, slide):
-        return self.get_directory() + '/' + slide['download_hash']
+        return self.get_directory() + '/' + md5(slide['url'])
 
 
     def get_slides_to_download(self, slides):
         slides_to_download = []
         for slide in slides:
-            if 'download_hash' in slide:
+            if slide['type'] == 'video':
                 slides_to_download.append(slide)
 
         return slides_to_download

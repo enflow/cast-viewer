@@ -90,6 +90,7 @@
     - htop
     - ufw
     - cec-utils
+    - mediainfo
 
 - name: Perform system upgrade
   apt:
