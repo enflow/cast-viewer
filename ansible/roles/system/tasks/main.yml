@@ -134,7 +134,7 @@
 
 - name: Copy in monitor
   copy:
-    src: 10-monitor.conf
+    src: 20-monitor.conf
     dest: /usr/share/X11/xorg.conf.d/20-monitor.conf
     mode: 0644
     owner: root
