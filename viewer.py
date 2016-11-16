@@ -49,7 +49,7 @@ def load_browser():
 
 def browser_template(template, params=[]):
     logging.debug('Browser template \'%s\' with params %s', template, params)
-    browser_url('file://{0}/www/{1}.html?{2}'.format(CWD, template, urllib.urlencode(params, True)), force=True)
+    browser_url('file://{0}/www/{1}.html?{2}'.format(CWD, template, urllib.urlencode(params, True)))
 
 
 def browser_send(command):
