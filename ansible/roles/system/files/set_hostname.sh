@@ -2,7 +2,7 @@
 
 if [ `hostname` = "raspberrypi" ]
 then
-    IDENTIFIER=$(tr -d -c "A-Z0-9" < /dev/urandom | head -c 10)
+    IDENTIFIER=$(tr -dc "A-HJ-NP-Za-km-z2-9" < /dev/urandom | head -c 10)
 
     echo "$IDENTIFIER" | tee /etc/hostname /boot/identifier.txt >/dev/null
     hostname $IDENTIFIER

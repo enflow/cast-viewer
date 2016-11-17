@@ -13,8 +13,6 @@ if [ ! -f /usr/bin/rpi-update ]; then
     sudo apt install -y rpi-update
     sudo /usr/bin/rpi-update
 
-    read -p "Press any key to reboot to apply updated firmware... " -n1 -s
-    echo -e ""
     reboot
 
     exit
@@ -56,10 +54,4 @@ PASSWORD=`head /dev/urandom | tr -dc A-Za-z0-9 | head -c 13 ; echo ''`
 echo "$PASSWORD" > /boot/password.txt
 echo "pi:$PASSWORD" | chpasswd
 
-echo "Installation completed."
-echo "Player identifies as $(hostname)"
-echo -e ""
-
-read -p "Press any key to reboot... " -n1 -s
-echo -e ""
 reboot
