@@ -1,14 +1,15 @@
 $(function () {
     var debugging = window.location.search.indexOf('debug=1') != -1;
-    var $debug = $('#debug').toggle(debugging);
+    $('body').toggleClass('debugging', debugging);
+    var $log = $('.log');
 
     var log = function (msg) {
         if (!debugging) {
             return;
         }
 
-        $debug.append('[' + new Date().toUTCString() + '] ' + msg + '<br>');
-        $debug.scrollTop($debug[0].scrollHeight);
+        $log.append('[' + new Date().toUTCString() + '] ' + msg + '<br>');
+        $log.scrollTop($log[0].scrollHeight);
     };
 
     var getInactiveIframe = function () {
@@ -61,16 +62,15 @@ $(function () {
                 return;
             }
 
-            if (isInactiveApplicable(data.url)) {
-                // In most cases, when 2 preloads are send a video or other kind of slide is inbetween
-                // Due to the way videos are played, the preload is send first, and then the video starts playing
-                // To prevent a ugly preload flash (i.e. you see the next page before the video starts playing)
-                // we add a very hacky timeout to ensure the preload happens in the background
-                setTimeout(setInactiveActive, 1000);
-                return;
-            }
+            setTimeout(function() {
+                getInactiveIframe().attr('src', data.url);
+            }, 1000);
+        }
 
-            getInactiveIframe().attr('src', data.url);
+        if (data.action == 'clear') {
+            log('Clearing active');
+
+            $('iframe.active').attr('src', 'about:blank');
         }
     };
     ws.onclose = function (evt) {

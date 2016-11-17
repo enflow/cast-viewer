@@ -32,7 +32,3 @@ def download_with_progress(file_name, url):
                 done = int(50 * dl / total_length)
                 sys.stdout.write("\r[%s%s]" % ('=' * done, ' ' * (50-done)) )
                 sys.stdout.flush()
-
-
-def md5(input):
-    return hashlib.md5(input).hexdigest()

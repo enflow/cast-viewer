@@ -1,5 +1,8 @@
 {
     "player": {
         "layout": false
+    },
+    "blank": {
+        "layout": false
     }
 }

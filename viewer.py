@@ -78,7 +78,7 @@ def browser_preload(slide):
 
 
 def view_video(uri, duration):
-    logging.debug('Displaying video %s for %s ', uri, duration)
+    browser_template('blank')
 
     player_args = ['omxplayer', uri]
     player_kwargs = {'o': 'hdmi', '_bg': True, '_ok_code': [0, 124]}
@@ -92,7 +92,7 @@ def view_video(uri, duration):
     while run.process.alive:
         sleep(1)
     if run.exit_code == 124:
-        logging.error('omxplayer timed out')
+        logging.info('omxplayer timed out')
 
 
 def broadcast_loop(scheduler):

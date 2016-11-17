@@ -26,7 +26,7 @@ class Scheduler(object):
 
         try:
             status = get_status()
-            print json.dumps(status)
+            logging.debug(json.dumps(status))
 
             r = requests.get('https://cast.enflow.nl/api/v1/player/{0}'.format(self.hostname), {'status': json.dumps(status)})
             decoded_response = r.json()

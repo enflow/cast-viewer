@@ -6,7 +6,6 @@ import glob
 import logging
 import sh
 from lib.utils import download_with_progress
-from lib.utils import md5
 
 class Downloader(object):
     def __init__(self):
@@ -28,13 +27,14 @@ class Downloader(object):
             # hacky way to validate if the MP4 is not corrupt
             mediainfo = sh.mediainfo(path).rstrip()
             if "Codec ID/Info" not in mediainfo:
-                logging.error('Downloaded file doesn\'t look like a valid mp4 file: %s', slide['url'])
+                logging.error('Downloaded file doesn\'t look like a valid mp4 file: %s (hash=%s)', slide['url'], slide['hash'])
                 os.remove(path)
+
 
     def remove_unused(self, slides_to_download):
         download_hashes = []
         for slide in slides_to_download:
-            download_hashes.append(md5(slide['url']))
+            download_hashes.append(slide['hash'])
 
         for path in glob.glob(self.get_directory() + '/*'):
             filename = os.path.basename(path)
@@ -44,7 +44,7 @@ class Downloader(object):
 
 
     def get_path_for_slide(self, slide):
-        return self.get_directory() + '/' + md5(slide['url'])
+        return self.get_directory() + '/' + slide['hash']
 
 
     def get_slides_to_download(self, slides):

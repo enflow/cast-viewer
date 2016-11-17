@@ -1,17 +1,17 @@
-@import 'layout';
+@import "layout";
 
 iframe {
     width: 100%;
     height: 100%;
     position: absolute;
     display: none;
+
+    &.active {
+        display: block;
+    }
 }
 
-iframe.active {
-    display: block;
-}
-
-#debug {
+.log {
     position: absolute;
     bottom: 0;
     left: 0;
@@ -25,4 +25,34 @@ iframe.active {
     overflow-y: scroll;
     display: none;
     font-size: 14px;
+}
+
+.debugging {
+    background: #efefef;
+
+    .log {
+        display: block;
+    }
+
+    iframe {
+        width: 48%;
+        height: 100%;
+        border: 5px solid transparent;
+        display: block;
+        top: 0;
+        transition: 2s top ease-in-out;
+        -webkit-transform: translate3d(0, 0, 0);
+        -webkit-backface-visibility: hidden;
+        -webkit-perspective: 1000;
+
+        &.active {
+            border: 5px solid red;
+            top: 20%;
+            transition: 2s top ease-in-out;
+        }
+
+        &.secondary {
+            left: 52%;
+        }
+    }
 }
