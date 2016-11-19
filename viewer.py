@@ -9,6 +9,7 @@ from json import load as json_load
 from websocket_server import WebsocketServer
 from threading import Thread
 from lib.system import is_under_voltage
+from lib.utils import file_get_contents
 import logging
 import sh
 import sys
@@ -16,6 +17,7 @@ import os
 import urllib
 import socket
 import json
+import rollbar
 
 from lib.downloader import Downloader
 from lib.scheduler import Scheduler
@@ -145,7 +147,7 @@ def broadcast_loop(scheduler):
 
 
 def get_slide_url(slide):
-    if 'download_hash' in slide:
+    if 'hash' in slide:
         return downloader.get_path_for_slide(slide)
 
     return slide['url']
@@ -155,7 +157,12 @@ def setup():
     global CWD, HOSTNAME, DEBUGGING
     CWD = os.getcwd()
     HOSTNAME = socket.gethostname()
-    DEBUGGING = os.path.isfile('/boot/debug');
+    DEBUGGING = os.path.isfile('/boot/debug')
+
+    rollbar_token = file_get_contents('/boot/rollbar')
+    logging.debug(rollbar_token)
+    if rollbar_token:
+        rollbar.init(rollbar_token, 'production')
 
     if HOSTNAME == 'raspberrypi':
         raise RuntimeError('Hostname still is set to the default "raspberrypi". Unable to identiy with that.')
@@ -163,12 +170,6 @@ def setup():
     if DEBUGGING:
         root = logging.getLogger()
         root.setLevel(logging.DEBUG)
-
-        ch = logging.StreamHandler(sys.stdout)
-        ch.setLevel(logging.DEBUG)
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        ch.setFormatter(formatter)
-        root.addHandler(ch)
 
 
 def websocket_server():
@@ -210,4 +211,6 @@ if __name__ == "__main__":
         main()
     except:
         logging.exception("Cast viewer crashed.")
+        rollbar.report_exc_info()
+
         raise

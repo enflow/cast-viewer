@@ -20,6 +20,9 @@ This code is mostly based on the source provided by the lovely people at Screenl
 ## Development
 Enable debug mode when developing to receive all logging output to stdout: `touch /boot/debug`
 
+## Rollbar
+To enable the optional rollbar error reporting integration, create a file at `/boot/rollbar` which should contain the `post_server_item` project access token to enable error reporting.  
+
 ### Template editing
 Templates are generated with [Harp](http://harpjs.com/). This enabled template inherence and out of the box static asset generation.
 Recompile the templates by running in the project directory:

@@ -8,12 +8,14 @@ import pytz
 import sys
 import sh
 import hashlib
+import os
 
 HTTP_OK = xrange(200, 299)
 
 def validate_url(string):
     checker = urlparse(string)
     return bool(checker.scheme in ('http', 'https') and checker.netloc)
+
 
 def download_with_progress(file_name, url):
     with open(file_name, "wb") as f:
@@ -32,3 +34,11 @@ def download_with_progress(file_name, url):
                 done = int(50 * dl / total_length)
                 sys.stdout.write("\r[%s%s]" % ('=' * done, ' ' * (50-done)) )
                 sys.stdout.flush()
+
+
+def file_get_contents(filename):
+    if os.path.exists(filename):
+        fp = open(filename, "r")
+        content = fp.read()
+        fp.close()
+        return content.rstrip()

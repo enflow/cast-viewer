@@ -5,3 +5,4 @@ sh==1.08
 certifi==2016.9.26
 pytz==2012d
 websocket-server==0.4
+rollbar>=0.13.8
