@@ -45,6 +45,18 @@
     regexp: ^hdmi_force_hotplug=
     line: hdmi_force_hotplug=1
 
+- name: Set HDMI group to CEA
+  lineinfile:
+    dest: /boot/config.txt
+    regexp: ^hdmi_group=
+    line: hdmi_group=1
+
+- name: Force HDMI mode 16 (1080p, 60 Hz)
+  lineinfile:
+    dest: /boot/config.txt
+    regexp: ^hdmi_mode=
+    line: hdmi_mode=16
+
 - name: Hide voltage and temperature
   lineinfile:
     dest: /boot/config.txt
