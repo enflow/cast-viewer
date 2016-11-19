@@ -149,6 +149,12 @@
     - 10-quirks.conf
     - 50-wacom.conf
 
+- name: Restart on kernel panic
+  lineinfile:
+    dest: /etc/sysctl.conf
+    regexp: ^kernel.panic=
+    line: kernel.panic=5
+
 - name: Restart X
   command: /bin/true
   notify:
