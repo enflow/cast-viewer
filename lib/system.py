@@ -4,11 +4,13 @@ import pytz
 import sys
 import sh
 import os
-from datetime import timedelta
+from datetime import timedelta, datetime
+
 
 def get_status():
     throttled = get_throttled()
     return {
+        'now': str(datetime.now()),
         'version': get_git_tag(),
         'throttled': throttled,
         'is_under_voltage': is_under_voltage(throttled),
