@@ -209,6 +209,8 @@ def main():
 if __name__ == "__main__":
     try:
         main()
+    except (KeyboardInterrupt, SystemExit) as e:
+        pass
     except:
         logging.exception("Cast viewer crashed.")
         rollbar.report_exc_info()
