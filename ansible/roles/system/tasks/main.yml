@@ -103,6 +103,7 @@
     - ufw
     - cec-utils
     - mediainfo
+    - nload
 
 - name: Perform system upgrade
   apt:
