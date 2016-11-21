@@ -4,8 +4,9 @@ import pytz
 import sys
 import sh
 import os
+import netifaces
+import socket
 from datetime import timedelta, datetime
-
 
 def get_status():
     throttled = get_throttled()
@@ -18,7 +19,8 @@ def get_status():
         'firmware': vcgencmd('version').split('\n'),
         'cec': get_cec(),
         'load': os.getloadavg(),
-        'uptime': get_uptime()
+        'uptime': get_uptime(),
+        'ips': get_ips()
     }
 
 def vcgencmd(command):
@@ -44,3 +46,24 @@ def get_uptime():
     with open('/proc/uptime', 'r') as f:
         uptime_seconds = float(f.readline().split()[0])
         return str(timedelta(seconds = uptime_seconds))
+
+def get_ips():
+    ips = {}
+    for interface in netifaces.interfaces():
+        ips[interface] = get_ip_by_interface(interface)
+    return ips
+
+def get_ip_by_interface(interface):
+    try:
+        ips = netifaces.ifaddresses(interface)
+    except ValueError:
+        return
+    for k in ips.keys():
+        ip = ips[k][0].get('addr', False)
+        if ip:
+            try:
+                socket.inet_aton(ip)
+                return ip
+            except socket.error:
+                pass
+    return
