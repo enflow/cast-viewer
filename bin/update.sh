@@ -20,8 +20,7 @@ then
     exit 0
 fi
 
-git fetch --all
-git reset --hard $LATEST_TAG
+git checkout $LATEST_TAG
 
 cd /home/pi/cast-viewer/ansible
 ansible-playbook site.yml --skip-tags system-upgrade
