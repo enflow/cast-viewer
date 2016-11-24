@@ -46,12 +46,12 @@ def load_browser():
     command = sh.Command('chromium-browser')
     browser = command('--kiosk', '--incognito', '--no-first-run', '--disable-translate', '--system-developer-mode', 'file://' + CWD + '/www/player.html?debug=' + ("1" if DEBUGGING else "0"), _bg=True)
     logging.info('Browser loaded. Running as PID %s. Waiting 5 seconds to start.', browser.pid)
-    sleep(5);
+    sleep(5)
 
 
 def browser_template(template, params=[]):
     logging.debug('Browser template \'%s\' with params %s', template, params)
-    browser_url('file://{0}/www/{1}.html?{2}'.format(CWD, template, urllib.urlencode(params, True)))
+    browser_url('{1}.html?{2}'.format(CWD, template, urllib.urlencode(params, True)).rstrip('?'))
 
 
 def browser_send(command):
