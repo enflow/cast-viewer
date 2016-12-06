@@ -29,6 +29,8 @@ __license__ = "Dual License: GPLv2 and Commercial License"
 EMPTY_BROADCAST_DELAY = 10  # secs
 
 browser = None
+scheduler = None
+schedulerThread = None
 downloader = None
 server = None
 
@@ -43,15 +45,17 @@ def load_browser():
         logging.info('killing previous browser %s', browser.pid)
         browser.process.kill()
 
-    command = sh.Command('chromium-browser')
-    browser = command('--kiosk', '--incognito', '--no-first-run', '--disable-translate', '--system-developer-mode', 'file://' + CWD + '/www/player.html?debug=' + ("1" if DEBUGGING else "0"), _bg=True)
+    browser = sh.chromium_browser('--kiosk', '--incognito', '--no-first-run', '--disable-translate', '--system-developer-mode', 'file://' + CWD + '/www/player.html?debug=' + ("1" if DEBUGGING else "0"), _bg=True)
     logging.info('Browser loaded. Running as PID %s. Waiting 5 seconds to start.', browser.pid)
     sleep(5)
 
 
-def browser_template(template, params=[]):
+def get_template_url(template, params=[]):
     logging.debug('Browser template \'%s\' with params %s', template, params)
-    browser_url('{1}.html?{2}'.format(CWD, template, urllib.urlencode(params, True)).rstrip('?'))
+    return '{1}.html?{2}'.format(CWD, template, urllib.urlencode(params, True)).rstrip('?')
+
+def browser_template(template, params=[]):
+    browser_url(get_template_url(template, params))
 
 
 def browser_send(command):
@@ -75,6 +79,8 @@ def browser_preload(slide):
         return
 
     url = get_slide_url(slide)
+    if slide['type'] == 'video':
+        url = get_template_url('blank')
 
     browser_send({'action': 'preload', 'url': url})
 
@@ -84,7 +90,6 @@ def view_video(uri, duration):
 
     player_args = ['omxplayer', uri]
     player_kwargs = {'o': 'hdmi', '_bg': True, '_ok_code': [0, 124]}
-    player_kwargs['_ok_code'] = [0, 124]
 
     if duration and duration != 'N/A':
         player_args = ['timeout', duration] + player_args
@@ -114,7 +119,6 @@ def broadcast_loop(scheduler):
         return
 
     slide = scheduler.next_slide()
-    logging.debug(slide)
 
     if slide is None:
         browser_template('no_slides')
@@ -174,17 +178,38 @@ def setup():
 
 def websocket_server():
     global server
+
+    logging.debug('Running websocket server')
+
     server = WebsocketServer(13254, host='127.0.0.1')
     server.run_forever()
 
 
+def run_scheduler():
+    global scheduler
+
+    logging.debug('Running scheduler thread')
+
+    if scheduler.fetch():
+        downloader.download(scheduler.slides)
+
+    logging.debug('Scheduler state: %s', scheduler.state)
+
+def wait_for_scheduler():
+    global schedulerThread
+    logging.debug("Waiting on scheduler to finish")
+    browser_template('loading')
+    schedulerThread.join()
+    schedulerThread = None
+
 def main():
-    global downloader
+    global scheduler, schedulerThread, downloader
 
     setup()
 
     downloader = Downloader()
     scheduler = Scheduler(HOSTNAME)
+    schedulerThread = None
 
     t = Thread(target=websocket_server)
     t.daemon = True
@@ -196,14 +221,16 @@ def main():
 
     logging.debug('Entering infinite loop.')
     while True:
-        if scheduler.index is 0:
-            if scheduler.fetch():
-                browser_template('loading')
-                downloader.download(scheduler.slides)
-
-            logging.debug('Scheduler state: %s', scheduler.state)
+        if not scheduler.slides or len(scheduler.slides) - 1 == scheduler.index:
+            schedulerThread = Thread(target=run_scheduler)
+            schedulerThread.start()
+            if not scheduler.slides and schedulerThread.isAlive():
+                wait_for_scheduler();
 
         broadcast_loop(scheduler)
+
+        if scheduler.index is 0 and schedulerThread and schedulerThread.isAlive():
+            wait_for_scheduler();
 
 
 if __name__ == "__main__":

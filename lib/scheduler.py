@@ -73,8 +73,7 @@ class Scheduler(object):
             idx = (self.index + x) % len(self.slides)
             slide = self.slides[idx]
 
-            if 'web' in slide['type']:
-                return slide
+            return slide
 
         return None
 
