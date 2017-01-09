@@ -127,6 +127,11 @@ def hamachi(network_id):
         logging.info(sh.hamachi('do-join', network_id, '""').rstrip())
 
 
+def restart_hamachi():
+    os.system('/etc/init.d/logmein-hamachi restart')
+    sleep(2) # wait for the daemon to 'really' start
+
+
 if __name__ == '__main__':
     config = configparser.ConfigParser()
     config.read(NETWORK_PATH)
@@ -165,11 +170,13 @@ if __name__ == '__main__':
 
     if has_ip('wlan0') and has_ip('eth0'):
         bring_down_interface('wlan0')
-
-        logging.info('Restarting logmein-hamachi daemon due to network change')
-        os.system('/etc/init.d/logmein-hamachi restart')
-        sleep(2) # wait for the daemon to 'really' start
+        restart_hamachi()
 
 
     if config.has_section('hamachi'):
+        # sometimes hamachi hangs on the status 'logging in'
+        # restart the daemon and try logging in again
+        if "logging in" in sh.hamachi(_ok_code=[0,1]).rstrip():
+            restart_hamachi()
+
         hamachi(config.get('hamachi', 'network'))
