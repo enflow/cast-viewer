@@ -6,6 +6,7 @@ import sh
 import os
 import netifaces
 import socket
+import math
 from datetime import timedelta, datetime
 
 def get_status():
@@ -20,7 +21,8 @@ def get_status():
         'cec': get_cec(),
         'load': os.getloadavg(),
         'uptime': get_uptime(),
-        'ips': get_ips()
+        'ips': get_ips(),
+        'disk': get_disk()
     }
 
 def vcgencmd(command):
@@ -67,3 +69,14 @@ def get_ip_by_interface(interface):
             except socket.error:
                 pass
     return
+
+def get_disk():
+    disk = os.statvfs("/")
+    capacity = disk.f_bsize * disk.f_blocks
+    available = disk.f_bsize * disk.f_bavail
+    used = disk.f_bsize * (disk.f_blocks - disk.f_bavail)
+    return {
+        'used': math.floor(used/1.048576e6),
+        'available': math.floor(available/1.048576e6),
+        'capacity': math.floor(capacity/1.048576e6)
+    }
