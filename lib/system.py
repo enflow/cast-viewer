@@ -80,3 +80,17 @@ def get_disk():
         'available': math.floor(available/1.048576e6),
         'capacity': math.floor(capacity/1.048576e6)
     }
+
+def hostname():
+    hostname = socket.gethostname()
+
+    if hostname == 'raspberrypi':
+        raise RuntimeError('Hostname still is set to the default "raspberrypi". Unable to identiy with that.')
+
+    return hostname
+
+def api_url():
+    return 'https://cast.enflow.nl/api/v1/player/{0}'.format(hostname())
+
+def user_agent():
+    return ('enflow-cast-viewer/' + get_git_tag())

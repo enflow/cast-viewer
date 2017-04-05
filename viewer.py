@@ -7,9 +7,11 @@ from random import shuffle
 from time import sleep
 from json import load as json_load
 from websocket_server import WebsocketServer
-from threading import Thread
 from lib.system import is_under_voltage
 from lib.utils import file_get_contents
+from lib.system import get_status
+from lib.system import hostname
+from lib.heartbeater import send_heartbeat
 import logging
 import sh
 import sys
@@ -18,6 +20,8 @@ import urllib
 import socket
 import json
 import rollbar
+import threading
+import requests
 
 from lib.downloader import Downloader
 from lib.scheduler import Scheduler
@@ -35,7 +39,6 @@ downloader = None
 server = None
 
 CWD = None
-HOSTNAME = None
 
 def load_browser():
     global browser
@@ -109,7 +112,7 @@ def broadcast_loop(scheduler):
         return
 
     if scheduler.state == scheduler.STATE_REQUIRES_SETUP:
-        browser_template('setup', {'player_identifier': HOSTNAME})
+        browser_template('setup', {'player_identifier': hostname()})
         sleep(EMPTY_BROADCAST_DELAY)
         return
 
@@ -158,22 +161,15 @@ def get_slide_url(slide):
 
 
 def setup():
-    global CWD, HOSTNAME, DEBUGGING
+    global CWD, DEBUGGING
     CWD = os.getcwd()
-    HOSTNAME = socket.gethostname()
     DEBUGGING = os.path.isfile('/boot/debug')
-
-    rollbar_token = file_get_contents('/boot/rollbar')
-    logging.debug(rollbar_token)
-    if rollbar_token:
-        rollbar.init(rollbar_token, 'production')
-
-    if HOSTNAME == 'raspberrypi':
-        raise RuntimeError('Hostname still is set to the default "raspberrypi". Unable to identiy with that.')
 
     if DEBUGGING:
         root = logging.getLogger()
         root.setLevel(logging.DEBUG)
+    else:
+        rollbar.init('eb9b246b01a64b65885a8d2113f39bde', 'production')
 
 
 def websocket_server():
@@ -195,12 +191,17 @@ def run_scheduler():
 
     logging.debug('Scheduler state: %s', scheduler.state)
 
+
 def wait_for_scheduler():
-    global schedulerThread
+    global schedulerThread, scheduler
     logging.debug("Waiting on scheduler to finish")
-    browser_template('loading')
+
+    if scheduler.state != scheduler.STATE_REQUIRES_SETUP:
+        browser_template('loading')
+
     schedulerThread.join()
     schedulerThread = None
+
 
 def main():
     global scheduler, schedulerThread, downloader
@@ -208,10 +209,14 @@ def main():
     setup()
 
     downloader = Downloader()
-    scheduler = Scheduler(HOSTNAME)
+    scheduler = Scheduler()
     schedulerThread = None
 
-    t = Thread(target=websocket_server)
+    t = threading.Thread(target=send_heartbeat)
+    t.daemon = True
+    t.start()
+
+    t = threading.Thread(target=websocket_server)
     t.daemon = True
     t.start()
 
@@ -222,7 +227,7 @@ def main():
     logging.debug('Entering infinite loop.')
     while True:
         if not scheduler.slides or len(scheduler.slides) - 1 == scheduler.index:
-            schedulerThread = Thread(target=run_scheduler)
+            schedulerThread = threading.Thread(target=run_scheduler)
             schedulerThread.start()
             if not scheduler.slides and schedulerThread.isAlive():
                 wait_for_scheduler();
