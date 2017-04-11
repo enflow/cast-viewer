@@ -7,6 +7,9 @@
   with_file:
     - id_rsa.pub
 
+- name: Activate SSH
+  command: systemctl enable ssh.service
+
 - name: Disallow password authentication
   lineinfile: dest=/etc/ssh/sshd_config
               regexp="^PasswordAuthentication"

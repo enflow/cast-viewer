@@ -172,8 +172,8 @@ if __name__ == '__main__':
         bring_down_interface('wlan0')
         restart_hamachi()
 
-        if config.has_section('hamachi'):
-            if "logged in" not in sh.hamachi(_ok_code=[0,1,255]).rstrip():
-                restart_hamachi()
+    if config.has_section('hamachi'):
+        if "logged in" not in sh.hamachi(_ok_code=[0,1,255]).rstrip():
+            restart_hamachi()
 
-            hamachi(config.get('hamachi', 'network'))
+        hamachi(config.get('hamachi', 'network'))

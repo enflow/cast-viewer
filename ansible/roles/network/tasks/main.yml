@@ -47,7 +47,7 @@
 
 - name: Install hamachi
   apt:
-    deb: https://www.vpn.net/installers/logmein-hamachi_2.1.0.165-1_armhf.deb
+    deb: https://www.vpn.net/installers/logmein-hamachi_2.1.0.174-1_armhf.deb
 
 - name: Restart network services
   command: /bin/true
