@@ -11,7 +11,8 @@ set -x
 if [ ! -f /usr/bin/rpi-update ]; then
     sudo apt update
     sudo apt install -y rpi-update
-    sudo /usr/bin/rpi-update
+    sudo SKIP_WARNING=1 rpi-update
+    sudo apt-get -o Dpkg::Options::='--force-confold' --force-yes -fuy dist-upgrade
 
     reboot
 

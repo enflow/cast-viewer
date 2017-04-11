@@ -112,7 +112,7 @@
     - system-upgrade
 
 - name: Perform RPI update
-  command: /usr/bin/rpi-update
+  command: SKIP_WARNING=1 /usr/bin/rpi-update
   tags:
     - system-upgrade
 
