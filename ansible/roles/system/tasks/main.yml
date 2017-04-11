@@ -88,6 +88,7 @@
   apt:
     name: "{{ item }}"
     state: latest
+    autoremove: yes
   with_items:
     - console-data
     - libffi-dev
@@ -115,12 +116,9 @@
     - system-upgrade
 
 - name: Perform RPI update
-  command: SKIP_WARNING=1 /usr/bin/rpi-update
-  tags:
-    - system-upgrade
-
-- name: Clean up unused packages
-  command: apt-get -y autoremove
+  shell: /usr/bin/rpi-update
+  environment:
+    SKIP_WARNING: 1
   tags:
     - system-upgrade
 
