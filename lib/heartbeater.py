@@ -21,6 +21,8 @@ def send_heartbeat():
         status = get_status()
 
         r = requests.post(api_url() + '/heartbeat', json=status, headers={'User-Agent': user_agent()})
-        logging.error('Heartbeat: status code %s with response %s', r.status_code, r.text);
+
+        if r.status_code is not 200:
+            logging.error('Heartbeat: status code %s with response %s', r.status_code, r.text);
     except requests.exceptions.ConnectionError as e:
         logging.error('Unable to send heartbeat, ConnectionError: %s', e)

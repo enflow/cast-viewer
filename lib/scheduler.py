@@ -31,12 +31,13 @@ class Scheduler(object):
             if r.status_code == 200:
                 slides = decoded_response['broadcast']['slides'] if decoded_response['broadcast'] else []
 
-                self.update_slides(slides)
+                self.state = self.STATE_EMPTY if not self.slides else self.STATE_OK
 
                 if slides == self.slides:
                     logging.debug('Broadcast response didn\'t change')
                     return
 
+                self.slides = slides
                 self.reload()
 
                 return True if slides else None
@@ -48,10 +49,6 @@ class Scheduler(object):
                 self.state=self.STATE_NO_CONNECTION if not self.slides else self.STATE_OK
         except requests.exceptions.ConnectionError as e:
            logging.error('Loading from broadcast cache, ConnectionError: %s', e)
-
-    def update_slides(self, slides):
-        self.slides = slides;
-        self.state = self.STATE_EMPTY if not self.slides else self.STATE_OK
 
     def next_slide(self):
         if not self.slides:
