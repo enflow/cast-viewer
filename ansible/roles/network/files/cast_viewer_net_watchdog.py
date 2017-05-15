@@ -83,8 +83,6 @@ def bring_down_interface(interface):
     ifdown = sh.Command('/sbin/ifconfig')
     ifdown('wlan0', 'down')
 
-    restart_networking()
-
 
 def has_ip(interface):
     """
@@ -167,13 +165,13 @@ if __name__ == '__main__':
         else:
             logging.error('Unable to connect to internet or gateway.')
 
-
+    force_hamachi_restart = False
     if has_ip('wlan0') and has_ip('eth0'):
         bring_down_interface('wlan0')
-        restart_hamachi()
+        force_hamachi_restart = True
 
     if config.has_section('hamachi'):
-        if "logged in" not in sh.hamachi(_ok_code=[0,1,255]).rstrip():
+        if force_hamachi_restart or "logged in" not in sh.hamachi(_ok_code=[0,1,255]).rstrip():
             restart_hamachi()
 
         hamachi(config.get('hamachi', 'network'))
