@@ -171,7 +171,7 @@ if __name__ == '__main__':
         force_hamachi_restart = True
 
     if config.has_section('hamachi'):
-        if force_hamachi_restart or "logged in" not in sh.hamachi(_ok_code=[0,1,255]).rstrip():
+        if force_hamachi_restart or not has_ip('ham0'):
             restart_hamachi()
 
         hamachi(config.get('hamachi', 'network'))

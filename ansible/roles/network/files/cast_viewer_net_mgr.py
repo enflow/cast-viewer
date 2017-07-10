@@ -123,7 +123,7 @@ def get_active_iface(config, prefix):
 
 
 def main():
-    config = configparser.ConfigParser()
+    config = configparser.RawConfigParser()
     config.read(NETWORK_PATH)
 
     logging.info('Started Cast Viewer Network Manager.')
