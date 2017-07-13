@@ -57,6 +57,7 @@
   apt:
     name: zerotier-one
     state: present
+    allow_unauthenticated: yes
 
 - service:
     name: zerotier-one
