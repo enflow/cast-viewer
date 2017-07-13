@@ -94,7 +94,7 @@ def api_url():
     return 'https://cast.enflow.nl/api/v1/player/{0}'.format(hostname())
 
 def user_agent():
-    return ('enflow-cast-viewer/' + get_git_tag())
+    return 'enflow-cast-viewer/{0}'.format(get_git_tag())
 
 def get_zerotier_identity():
     return open('/var/lib/zerotier-one/identity.public').read().split(':')[0];
