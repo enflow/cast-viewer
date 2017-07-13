@@ -45,9 +45,23 @@
 - name: Activate network watchdog
   command: systemctl enable cast-viewer-net-watchdog.timer chdir=/etc/systemd/system
 
-- name: Install hamachi
+- name: Remove Hamachi
+  apt: pkg=logmein-hamachi
+       state=absent
+
+- apt_repository:
+    repo: deb https://download.zerotier.com/debian/jessie jessie main
+    state: present
+
+- name: ZeroTier
   apt:
-    deb: https://www.vpn.net/installers/logmein-hamachi_2.1.0.174-1_armhf.deb
+    name: zerotier-one
+    state: present
+
+- service:
+    name: zerotier-one
+    enabled: true
+    state: started
 
 - name: Restart network services
   command: /bin/true

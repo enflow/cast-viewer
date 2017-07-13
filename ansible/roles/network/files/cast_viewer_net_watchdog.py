@@ -38,7 +38,7 @@ def http_test(host):
     if 200 <= r.status_code < 400:
         return True
     else:
-        logging.error('Unable to reach Cast viewer.')
+        logging.error('Unable to reach Cast server.')
         return False
 
 
@@ -80,8 +80,8 @@ def bring_up_interface(interface):
 def bring_down_interface(interface):
     logging.info('Bringing down interface %s', interface)
 
-    ifdown = sh.Command('/sbin/ifconfig')
-    ifdown('wlan0', 'down')
+    ifdown = sh.Command('/sbin/ifdown')
+    ifdown('--force', interface)
 
 
 def has_ip(interface):
@@ -111,24 +111,8 @@ def get_active_iface(config, prefix):
             return iface
     return False
 
-
-def hamachi(network_id):
-    logging.info('Setting up hamachi network %s', network_id)
-
-    sh.hamachi('login', _timeout=15, _ok_code=[0,1])
-
-    list = sh.hamachi('list').rstrip()
-    logging.info('Hamachi list: \'%s\'', list)
-
-    if network_id not in list:
-        logging.info('Joining network %s', network_id)
-        logging.info(sh.hamachi('do-join', network_id, '""').rstrip())
-
-
-def restart_hamachi():
-    os.system('/etc/init.d/logmein-hamachi restart')
-    sleep(2) # wait for the daemon to 'really' start
-
+def join_zerotier_network():
+    os.system('/usr/sbin/zerotier-cli join 17d709436cf23366')
 
 if __name__ == '__main__':
     config = configparser.ConfigParser()
@@ -165,13 +149,7 @@ if __name__ == '__main__':
         else:
             logging.error('Unable to connect to internet or gateway.')
 
-    force_hamachi_restart = False
     if has_ip('wlan0') and has_ip('eth0'):
         bring_down_interface('wlan0')
-        force_hamachi_restart = True
 
-    if config.has_section('hamachi'):
-        if force_hamachi_restart or not has_ip('ham0'):
-            restart_hamachi()
-
-        hamachi(config.get('hamachi', 'network'))
+    join_zerotier_network()

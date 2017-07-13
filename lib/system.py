@@ -22,7 +22,8 @@ def get_status():
         'load': os.getloadavg(),
         'uptime': get_uptime(),
         'ips': get_ips(),
-        'disk': get_disk()
+        'disk': get_disk(),
+        'zerotier': get_zerotier_identity()
     }
 
 def vcgencmd(command):
@@ -94,3 +95,6 @@ def api_url():
 
 def user_agent():
     return ('enflow-cast-viewer/' + get_git_tag())
+
+def get_zerotier_identity():
+    return open('/var/lib/zerotier-one/identity.public').read().split(':')[0];
