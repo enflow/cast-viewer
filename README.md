@@ -12,10 +12,12 @@ $ sudo bash install.sh
 This code is mostly based on the source provided by the lovely people at Screenly. Please visit the official website at [Screenly.io](http://www.screenly.io). Original source can be found at https://github.com/wireload/screenly-ose
 
 ## Significant changes
-- Removed all web based code
+- Removed all web interface code
 - Removed the `image` asset
 - Renamed `assets` to `slides`
 - Added templates for setup etc.
+- Added installation scripts
+- Added heartbeat call to server
 
 ## Development
 Enable debug mode when developing which outputs everything to stdout: `touch /boot/debug` and enabled dual-mode in the chromium window to debug preloading.
