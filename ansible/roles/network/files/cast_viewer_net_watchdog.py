@@ -124,7 +124,7 @@ if __name__ == '__main__':
     reaches_internet = None
     wifi_has_ip = False
 
-    if not has_ip('eth0') and wifi_iface:
+    if wifi_iface:
         logging.info('Found wifi interface {}'.format(wifi_iface))
         wifi_is_static = is_static(config, wifi_iface)
         wifi_is_healthy = None
@@ -148,8 +148,5 @@ if __name__ == '__main__':
             logging.info('WiFi interface is healthy.')
         else:
             logging.error('Unable to connect to internet or gateway.')
-
-    if has_ip('wlan0') and has_ip('eth0'):
-        bring_down_interface('wlan0')
 
     join_zerotier_network()
