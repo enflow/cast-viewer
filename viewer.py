@@ -223,7 +223,7 @@ def main():
 
     if is_under_voltage():
         browser_template('under_voltage')
-        sleep(3 if DEBUGGING else 60)
+        sleep(5)
 
     logging.debug('Entering infinite loop.')
     while True:
