@@ -39,6 +39,27 @@
     dest: /boot/network.ini
     force: no
 
+- name: Copies the ntp.conf
+  copy:
+    owner: root
+    group: root
+    mode: 0644
+    src: ntp.conf
+    dest: /etc/ntp.conf
+    force: yes
+
+- name: Copies the resolv.conf.head
+  copy:
+    owner: root
+    group: root
+    mode: 0644
+    src: resolv.conf.head
+    dest: /etc/resolv.conf.head
+    force: yes
+
+- name: Update resolvconf
+  command: resolvconf -u
+
 - name: Activate network manager
   command: systemctl enable cast-viewer-net-manager.service chdir=/etc/systemd/system
 
@@ -49,20 +70,29 @@
   apt: pkg=logmein-hamachi
        state=absent
 
-- apt_repository:
+- name: Zerotier GPG key
+  apt_key:
+    keyserver: pgp.mit.edu
+    id: 23E52A61
+
+- name: Zerotier repository
+  apt_repository:
     repo: deb https://download.zerotier.com/debian/jessie jessie main
     state: present
 
-- name: ZeroTier
+- name: Zerotier
   apt:
     name: zerotier-one
     state: present
-    allow_unauthenticated: yes
+    update_cache: yes
 
 - service:
     name: zerotier-one
     enabled: true
     state: started
+
+- name: Join zerotier network
+  command: /usr/sbin/zerotier-cli join 17d709436cf23366
 
 - name: Restart network services
   command: /bin/true

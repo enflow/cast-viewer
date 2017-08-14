@@ -8,6 +8,10 @@ fi
 set -e
 set -x
 
+# Ensure valid DNS settings
+printf "nameserver 8.8.8.8\nnameserver 8.8.4.4" > /etc/resolv.conf.head
+resolvconf -u
+
 if [ ! -f /usr/bin/rpi-update ]; then
     sudo apt update
     sudo apt install -y rpi-update
@@ -19,6 +23,7 @@ if [ ! -f /usr/bin/rpi-update ]; then
     exit
 fi
 
+# Setup ansible
 sudo mkdir -p /etc/ansible
 echo -e "[local]\nlocalhost ansible_connection=local" | sudo tee /etc/ansible/hosts > /dev/null
 
@@ -28,11 +33,13 @@ if [ ! -f /etc/locale.gen ]; then
   sudo locale-gen
 fi
 
+# Install basic dependencies
 sudo apt purge -y python-setuptools python-pip python-pyasn1
 sudo apt install -y python-dev git-core libffi-dev libssl-dev
 curl -s https://bootstrap.pypa.io/get-pip.py | sudo python
 sudo pip install ansible==2.1.0.0
 
+# Clone the source
 git clone https://github.com/enflow-nl/cast-viewer.git /home/pi/cast-viewer
 cd /home/pi/cast-viewer
 chown -R pi:pi /home/pi/cast-viewer
@@ -43,6 +50,7 @@ git checkout $LATEST_TAG
 cd /home/pi/cast-viewer/ansible
 ansible-playbook site.yml
 
+# Cleanup
 sudo apt-get autoclean
 sudo apt-get clean
 sudo find /usr/share/doc -depth -type f ! -name copyright -delete
@@ -51,6 +59,7 @@ sudo rm -rf /usr/share/man /usr/share/groff /usr/share/info /usr/share/lintian /
 sudo find /usr/share/locale -type f ! -name 'en' ! -name 'de*' ! -name 'es*' ! -name 'ja*' ! -name 'fr*' ! -name 'zh*' -delete
 sudo find /usr/share/locale -mindepth 1 -maxdepth 1 ! -name 'en*' ! -name 'de*' ! -name 'es*' ! -name 'ja*' ! -name 'fr*' ! -name 'zh*' -exec rm -r {} \;
 
+# Set a random password
 PASSWORD=`head /dev/urandom | tr -dc A-Za-z0-9 | head -c 13 ; echo ''`
 echo "$PASSWORD" > /boot/password.txt
 echo "pi:$PASSWORD" | chpasswd

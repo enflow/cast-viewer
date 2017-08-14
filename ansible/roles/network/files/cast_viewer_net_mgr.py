@@ -50,9 +50,9 @@ auto {}
         interface_stanza += '\n  wireless-power off'
 
         if ssid:
-            interface_stanza += '\n  wpa-ssid "{}"'.format(ssid)
+            interface_stanza += '\n  wpa-ssid {}'.format(ssid)
         if passphrase:
-            interface_stanza += '\n  wpa-psk "{}"'.format(passphrase)
+            interface_stanza += '\n  wpa-psk {}'.format(passphrase)
         if hidden_ssid:
             if str(hidden_ssid).lower() in ['true', 'yes', 'on', '1']:
                 interface_stanza += '\n  wpa-ap-scan 1\n  wpa-scan-ssid 1'
@@ -61,7 +61,6 @@ auto {}
     interface_stanza += '\n'
 
     return interface_stanza
-
 
 def write_file(path, content):
 
@@ -151,7 +150,7 @@ def main():
                 interface=ethernet,
                 ip=ethernet_ip,
                 netmask=ethernet_netmask,
-                gateway=ethernet_gateway
+                gateway=ethernet_gateway,
             )
 
     if wifi:
@@ -181,6 +180,11 @@ def main():
                 passphrase=passphrase,
                 hidden_ssid=hidden_ssid,
             )
+
+    # In case neither wired or wireless is configured,
+    # let's just assume wired and dhcp as the default.
+    if not (wifi or ethernet):
+        interfaces += if_config(interface='eth0')
 
     write_file(INTERFACES_PATH, interfaces)
 

@@ -25,6 +25,7 @@ import requests
 
 from lib.downloader import Downloader
 from lib.scheduler import Scheduler
+from lib.pusher import Pusher
 
 __author__ = "Enflow (original by WireLoad Inc)"
 __copyright__ = "Copyright 2012-2016, WireLoad Inc"
@@ -202,7 +203,6 @@ def wait_for_scheduler():
     schedulerThread.join()
     schedulerThread = None
 
-
 def main():
     global scheduler, schedulerThread, downloader
 
@@ -211,6 +211,7 @@ def main():
     downloader = Downloader()
     scheduler = Scheduler()
     schedulerThread = None
+    Pusher()
 
     t = threading.Thread(target=send_heartbeat)
     t.daemon = True

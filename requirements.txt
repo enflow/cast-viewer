@@ -6,3 +6,5 @@ certifi==2016.9.26
 pytz==2012d
 websocket-server==0.4
 rollbar>=0.13.8
+python-wifi==0.6.1
+-e git://github.com/bumbar1/PythonPusherClient.git@cluster#egg=ekulyk

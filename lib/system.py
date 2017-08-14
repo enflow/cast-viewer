@@ -8,9 +8,11 @@ import netifaces
 import socket
 import math
 from datetime import timedelta, datetime
+from pythonwifi.iwlibs import Wireless
 
 def get_status():
     throttled = get_throttled()
+
     return {
         'now': str(datetime.now()),
         'version': get_git_tag(),
@@ -23,7 +25,8 @@ def get_status():
         'uptime': get_uptime(),
         'ips': get_ips(),
         'disk': get_disk(),
-        'zerotier': get_zerotier_identity()
+        'zerotier': get_zerotier_identity(),
+        'wifi': get_wifi()
     }
 
 def vcgencmd(command):
@@ -98,3 +101,18 @@ def user_agent():
 
 def get_zerotier_identity():
     return open('/var/lib/zerotier-one/identity.public').read().split(':')[0];
+
+def get_wifi():
+    if not get_ip_by_interface('wlan0'):
+        return Null
+
+    wifi = Wireless('wlan0')
+    aq = wifi.getQualityAvg()
+
+    return {
+        'essid': wifi.getEssid(),
+        'frequency': wifi.getFrequency(),
+        'quality': aq.quality,
+        'signal': aq.siglevel,
+        'noise': aq.nlevel
+    }
