@@ -4,6 +4,7 @@ import pusherclient
 import sh
 import os
 from lib.heartbeater import send_heartbeat
+from lib.system import hostname
 
 class Pusher(object):
     def __init__(self):
@@ -21,7 +22,7 @@ class Pusher(object):
         send_heartbeat()
 
     def pusher_connected(self, data):
-        channel = self.pusher.subscribe('KSXVBADTVP')
+        channel = self.pusher.subscribe(hostname())
         channel.bind('reboot', self.event_reboot)
         channel.bind('connect_to_zerotier', self.event_connect_to_zerotier)
         channel.bind('send_heartbeat', self.event_send_heartbeat)

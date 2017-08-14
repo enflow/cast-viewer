@@ -104,7 +104,7 @@ def get_zerotier_identity():
 
 def get_wifi():
     if not get_ip_by_interface('wlan0'):
-        return Null
+        return None
 
     wifi = Wireless('wlan0')
     aq = wifi.getQualityAvg()
