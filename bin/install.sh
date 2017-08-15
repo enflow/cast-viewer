@@ -37,12 +37,11 @@ curl -s https://bootstrap.pypa.io/get-pip.py | sudo python
 sudo pip install ansible==2.1.0.0
 
 # Clone the source
-git clone https://github.com/enflow-nl/cast-viewer.git /home/pi/cast-viewer
+sudo -u pi git clone https://github.com/enflow-nl/cast-viewer.git /home/pi/cast-viewer
 cd /home/pi/cast-viewer
-chown -R pi:pi /home/pi/cast-viewer
 
 LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
-git checkout $LATEST_TAG
+sudo -u pi git checkout $LATEST_TAG
 
 cd /home/pi/cast-viewer/ansible
 ansible-playbook site.yml
