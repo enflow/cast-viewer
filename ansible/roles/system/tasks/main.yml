@@ -181,3 +181,6 @@
   file:
     path: /var/swap
     state: absent
+
+- name: Set timezone to Europe/Amsterdam
+  command: timedatectl set-timezone Europe/Amsterdam

@@ -1,6 +1,5 @@
 ; Cast viewer network configuration
 
-
 ; This is how a static network configuration
 ; for wired networking would look like this.
 
@@ -10,17 +9,9 @@
 ;netmask=255.255.255.0
 ;gateway=192.168.1.1
 
-
 ; If you want to configure your WLAN with DHCP,
 ; the configuration would look something like this.
 
 ;[wlan0]
 ;ssid=NameOfYourNetwork
 ;passphrase=YourNetworkPassword
-
-
-; Connect to a Hamachi network.
-; Only invite-only networks are supported at the moment.
-
-[hamachi]
-network=355-241-176
