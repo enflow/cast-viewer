@@ -48,18 +48,6 @@
     dest: /etc/ntp.conf
     force: yes
 
-- name: Copies the resolv.conf.head
-  copy:
-    owner: root
-    group: root
-    mode: 0644
-    src: resolv.conf.head
-    dest: /etc/resolv.conf.head
-    force: yes
-
-- name: Update resolvconf
-  command: resolvconf -u
-
 - name: Activate network manager
   command: systemctl enable cast-viewer-net-manager.service chdir=/etc/systemd/system
 

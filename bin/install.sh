@@ -8,12 +8,9 @@ fi
 set -e
 set -x
 
-# Ensure valid DNS settings
-printf "nameserver 8.8.8.8\nnameserver 8.8.4.4" > /etc/resolv.conf.head
-resolvconf -u
+sudo apt update
 
 if [ ! -f /usr/bin/rpi-update ]; then
-    sudo apt update
     sudo apt install -y rpi-update
     sudo SKIP_WARNING=1 rpi-update
     sudo apt-get -o Dpkg::Options::='--force-confold' --force-yes -fuy dist-upgrade
