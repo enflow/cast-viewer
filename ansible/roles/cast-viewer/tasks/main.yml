@@ -1,5 +1,15 @@
 - name: Install pip dependencies
-  pip: "requirements={{ playbook_dir }}/../requirements.txt"
+  pip:
+    chdir: "{{ playbook_dir }}/../"
+    requirements: requirements.txt
+
+- name: Ensure cast-viewer is owned by pi:pi
+  file:
+    path: /home/pi/cast-viewer
+    owner: pi
+    group: pi
+    recurse: yes
+    state: directory
 
 - name: Copy cast systemd units
   copy:

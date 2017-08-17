@@ -42,8 +42,7 @@ def is_under_voltage(throttled=None):
     return throttled in ['0x50005', '0x50000']
 
 def get_git_tag():
-    commit = sh.git("rev-list", "--tags", "--max-count=1").rstrip()
-    return sh.git("describe", "--tags", commit).rstrip()
+    return sh.command("git name-rev --tags --name-only $(git rev-parse HEAD)").rstrip()
 
 def get_cec():
     return [i for i in sh.cec_client('-s', d=1, _in='pow 0', _ok_code=[0,1]).split('\n') if i][-1]

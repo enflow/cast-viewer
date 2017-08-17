@@ -183,4 +183,5 @@
     state: absent
 
 - name: Set timezone to Europe/Amsterdam
-  command: timedatectl set-timezone Europe/Amsterdam
+  timezone:
+    name: "Europe/Amsterdam"
