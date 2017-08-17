@@ -4,6 +4,7 @@ import pytz
 import sys
 import sh
 import os
+import subprocess
 import netifaces
 import socket
 import math
@@ -42,7 +43,7 @@ def is_under_voltage(throttled=None):
     return throttled in ['0x50005', '0x50000']
 
 def get_git_tag():
-    return sh.command("git name-rev --tags --name-only $(git rev-parse HEAD)").rstrip()
+    return subprocess.check_output("git name-rev --tags --name-only $(git rev-parse HEAD)", shell=True).rstrip()
 
 def get_cec():
     return [i for i in sh.cec_client('-s', d=1, _in='pow 0', _ok_code=[0,1]).split('\n') if i][-1]
