@@ -74,13 +74,18 @@
     state: present
     update_cache: yes
 
-- service:
+- name: Enable zerotier service
+  service:
     name: zerotier-one
     enabled: true
     state: started
 
 - name: Join zerotier network
-  command: /usr/sbin/zerotier-cli join 17d709436cf23366
+  shell: /usr/sbin/zerotier-cli join 17d709436cf23366
+  register: command_result
+  retries: 3
+  delay: 3
+  until: command_result | success
 
 - name: Restart network services
   command: /bin/true

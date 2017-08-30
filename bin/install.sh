@@ -32,7 +32,7 @@ fi
 
 # Install basic dependencies
 sudo apt purge -y python-setuptools python-pip python-pyasn1
-sudo apt install -y python-dev git-core libffi-dev libssl-dev
+sudo apt install -y python-dev git-core libffi-dev libssl-dev apt-transport-https
 curl -s https://bootstrap.pypa.io/get-pip.py | sudo python
 sudo pip install ansible==2.1.0.0
 
