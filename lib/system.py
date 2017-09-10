@@ -106,13 +106,16 @@ def get_wifi():
     if not get_ip_by_interface('wlan0'):
         return None
 
-    wifi = Wireless('wlan0')
-    aq = wifi.getQualityAvg()
+    try:
+        wifi = Wireless('wlan0')
+        aq = wifi.getQualityAvg()
 
-    return {
-        'essid': wifi.getEssid(),
-        'frequency': wifi.getFrequency(),
-        'quality': aq.quality,
-        'signal': aq.siglevel,
-        'noise': aq.nlevel
-    }
+        return {
+            'essid': wifi.getEssid(),
+            'frequency': wifi.getFrequency(),
+            'quality': aq.quality,
+            'signal': aq.siglevel,
+            'noise': aq.nlevel
+        }
+    except Exception as e:
+        return str(e)

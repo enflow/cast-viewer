@@ -34,13 +34,16 @@ def ping_test(host):
 
 
 def http_test(host):
-    r = requests.head(host, allow_redirects=True)
-    if 200 <= r.status_code < 400:
-        return True
-    else:
-        logging.error('Unable to reach Cast server.')
+    try:
+        r = requests.head(host, allow_redirects=True, verify=False)
+        if 200 <= r.status_code < 400:
+            return True
+        else:
+            logging.error('Unable to reach Cast server.')
+            return False
+    except Exception as e:
+        logging.error('http_test failed: {}'.format(str(e)))
         return False
-
 
 def restart_networking():
     networking = sh.Command('/etc/init.d/networking')
@@ -115,38 +118,33 @@ def join_zerotier_network():
     os.system('/usr/sbin/zerotier-cli join 17d709436cf23366')
 
 if __name__ == '__main__':
-    config = configparser.ConfigParser()
+    config = configparser.RawConfigParser()
     config.read(NETWORK_PATH)
 
     wifi_iface = get_active_iface(config, 'wlan')
 
-    can_ping_gw = None
-    reaches_internet = None
-    wifi_has_ip = False
-
     if wifi_iface:
         logging.info('Found wifi interface {}'.format(wifi_iface))
-        wifi_is_static = is_static(config, wifi_iface)
-        wifi_is_healthy = None
 
-        if not wifi_is_static:
-            wifi_has_ip = has_ip(wifi_iface)
-        else:
-            wifi_has_ip = True
+        reaches_internet = http_test('http://example.com')
+        can_ping_gw = ping_test(get_default_gw())
 
-        # Preliminarily assume interface is healthy if it has an IP.
-        wifi_is_healthy = wifi_has_ip
-
-        if not wifi_is_healthy:
-            wifi_is_healthy = bring_up_interface(wifi_iface)
-
-        if wifi_is_healthy:
-            reaches_internet = http_test('http://example.com')
-            can_ping_gw = ping_test(get_default_gw())
-
-        if reaches_internet or can_ping_gw:
+        if reaches_internet and can_ping_gw:
             logging.info('WiFi interface is healthy.')
         else:
-            logging.error('Unable to connect to internet or gateway.')
+            if not reaches_internet and not can_ping_gw:
+                logging.error('Unable to connect to internet and gateway')
+            elif can_ping_cw:
+                logging.error('Unable to connect to gateway')
+            elif reaches_internet:
+                logging.error('Unable to connect to the internet')
+
+            logging.info('Restarting {}'.format(wifi_iface))
+
+            wifi_is_healthy = bring_up_interface(wifi_iface)
+            if wifi_is_healthy:
+                logging.info('WiFi is healthy again!')
+            else:
+                logging.error('WiFi still isn\'t healthy')
 
     join_zerotier_network()
