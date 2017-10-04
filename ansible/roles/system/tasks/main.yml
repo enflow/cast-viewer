@@ -180,13 +180,20 @@
   notify:
     - restart-x-server
 
-- name: Disable swap
-  command: /sbin/swapoff --all removes=/var/swap
-
-- name: Remove swapfile from disk
-  file:
-    path: /var/swap
-    state: absent
-
 - name: Set timezone to Europe/Amsterdam
   command: timedatectl set-timezone Europe/Amsterdam
+
+- name: create the file to be used for swap
+  command: fallocate -l 1G /mnt/1GB.swap
+
+- name: format the file for swap
+  command: mkswap /mnt/1GB.swap
+
+- name: change swap file permissions
+  file: path=/mnt/1GB.swap owner=root group=root mode=0600
+
+- name: add the file to the system as a swap file
+  command: swapon /mnt/1GB.swap
+
+- name: write swap entry in fstab
+  mount: name=none src=/mnt/1GB.swap fstype=swap opts=sw passno=0 dump=0 state=present

@@ -173,12 +173,21 @@ def setup():
         rollbar.init('eb9b246b01a64b65885a8d2113f39bde', 'production')
 
 
+def websocket_client_left(client, server):
+    global browser
+
+    logging.debug("Chromium-browser closed websocket connection, restarting the browser in the next slide")
+    browser = None
+    sleep(2)
+
+
 def websocket_server():
     global server
 
     logging.debug('Running websocket server')
 
     server = WebsocketServer(13254, host='127.0.0.1')
+    server.set_fn_client_left(websocket_client_left)
     server.run_forever()
 
 
