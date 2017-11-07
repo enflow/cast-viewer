@@ -31,7 +31,10 @@ def get_status():
     }
 
 def vcgencmd(command):
-    return sh.vcgencmd(command).rstrip()
+    try:
+        return sh.vcgencmd(command, _timeout=3).rstrip()
+    except sh.ErrorReturnCode:
+        return ''
 
 def get_throttled():
     return vcgencmd('get_throttled').replace('throttled=', '')

@@ -14,7 +14,13 @@ Environment=NOREFRESH=1
 Environment=PYTHONPATH=/home/pi/cast-viewer
 
 ExecStart=/usr/bin/python /home/pi/cast-viewer/viewer.py
-Restart=on-failure
+
+WatchdogSec=60s
+Restart=always
+StartLimitInterval=5min
+StartLimitBurst=4
+StartLimitAction=reboot-force
+NotifyAccess=all
 
 [Install]
 WantedBy=multi-user.target

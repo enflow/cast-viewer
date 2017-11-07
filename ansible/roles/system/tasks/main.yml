@@ -118,6 +118,7 @@
 - name: Perform system upgrade
   apt:
     upgrade: dist
+    update_cache: yes
   tags:
     - system-upgrade
 

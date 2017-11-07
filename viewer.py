@@ -22,6 +22,7 @@ import json
 import rollbar
 import threading
 import requests
+import subprocess
 
 from lib.downloader import Downloader
 from lib.scheduler import Scheduler
@@ -212,6 +213,10 @@ def wait_for_scheduler():
     schedulerThread.join()
     schedulerThread = None
 
+def notify_systemd(watchdog_thread):
+    threading.Timer(15, notify_systemd, [watchdog_thread]).start()
+    subprocess.call('/bin/systemd-notify --pid=' + str(os.getpid()) + ' WATCHDOG=1', shell=True)
+
 def main():
     global scheduler, schedulerThread, downloader
 
@@ -230,13 +235,16 @@ def main():
     t.daemon = True
     t.start()
 
+    watchdog_thread = threading.Event()
+    notify_systemd(watchdog_thread)
+
     if is_under_voltage():
         browser_template('under_voltage')
         sleep(5)
 
     logging.debug('Entering infinite loop.')
     while True:
-        if not scheduler.slides or len(scheduler.slides) - 1 == scheduler.index:
+        if not scheduler.slides or len(scheduler.slides) - 1 == scheduler.index or scheduler.state != scheduler.STATE_OK:
             schedulerThread = threading.Thread(target=run_scheduler)
             schedulerThread.start()
             if not scheduler.slides and schedulerThread.isAlive():
