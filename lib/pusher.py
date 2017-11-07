@@ -17,5 +17,4 @@ class Pusher(object):
 
     def pusher_connected(self, data):
         channel = self.pusher.subscribe(device_uuid())
-        channel.bind('reboot', self.event_reboot)
         channel.bind('send_heartbeat', self.event_send_heartbeat)

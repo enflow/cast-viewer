@@ -57,9 +57,4 @@ class Downloader(object):
 
 
     def get_directory(self):
-        directory = '/data/cast-downloads'
-
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-
-        return directory
+        return '/data/cast-downloads'
