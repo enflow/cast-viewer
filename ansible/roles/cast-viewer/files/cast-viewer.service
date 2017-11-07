@@ -14,8 +14,6 @@ Environment=NOREFRESH=1
 Environment=PYTHONPATH=/home/pi/cast-viewer
 
 ExecStart=/usr/bin/python /home/pi/cast-viewer/viewer.py
-
-ExecStart=/usr/bin/python /home/pi/cast-viewer/viewer.py
 Restart=on-failure
 
 [Install]
