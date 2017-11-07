@@ -15,12 +15,8 @@ Environment=PYTHONPATH=/home/pi/cast-viewer
 
 ExecStart=/usr/bin/python /home/pi/cast-viewer/viewer.py
 
-WatchdogSec=60s
-Restart=always
-StartLimitInterval=5min
-StartLimitBurst=4
-StartLimitAction=reboot-force
-NotifyAccess=all
+ExecStart=/usr/bin/python /home/pi/cast-viewer/viewer.py
+Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target
