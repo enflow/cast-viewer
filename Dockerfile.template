@@ -6,7 +6,7 @@ RUN apt-get update && \
     apt-get clean
 
 # Install Python requirements
-ADD requirements.txt /tmp/requirements.txt
+COPY requirements.txt /tmp/requirements.txt
 RUN curl -s https://bootstrap.pypa.io/get-pip.py | /usr/bin/python && \
     pip install --upgrade --force-reinstall -r /tmp/requirements.txt
 
