@@ -12,9 +12,6 @@ class Pusher(object):
         self.pusher.connection.bind('pusher:connection_established', self.pusher_connected)
         self.pusher.connect()
 
-    def event_reboot(self, data):
-        os.system('sudo reboot')
-
     def event_send_heartbeat(self, data):
         send_heartbeat()
 
