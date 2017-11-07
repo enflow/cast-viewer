@@ -62,12 +62,9 @@ def get_template_url(template, params=[]):
 def browser_template(template, params=[]):
     browser_url(get_template_url(template, params))
 
-
 def browser_send(command):
     send = json.dumps(command);
     server.send_message_to_all(send)
-    logging.info('sended %s', send)
-
 
 def browser_url(url, force=False):
     global browser
@@ -77,7 +74,6 @@ def browser_url(url, force=False):
         load_browser()
 
     browser_send({'action': 'open', 'url': url, 'force': force})
-
 
 def browser_preload(slide):
     if slide is None:
@@ -114,7 +110,7 @@ def broadcast_loop(scheduler):
         return
 
     if scheduler.state == scheduler.STATE_REQUIRES_SETUP:
-        browser_template('setup', {'player_identifier': hostname()})
+        browser_template('setup', {'player_identifier': device_uuid()[:7]})
         sleep(EMPTY_BROADCAST_DELAY)
         return
 
@@ -213,10 +209,6 @@ def wait_for_scheduler():
     schedulerThread.join()
     schedulerThread = None
 
-def notify_systemd(watchdog_thread):
-    threading.Timer(15, notify_systemd, [watchdog_thread]).start()
-    subprocess.call('/bin/systemd-notify --pid=' + str(os.getpid()) + ' WATCHDOG=1', shell=True)
-
 def main():
     global scheduler, schedulerThread, downloader
 
@@ -234,9 +226,6 @@ def main():
     t = threading.Thread(target=websocket_server)
     t.daemon = True
     t.start()
-
-    watchdog_thread = threading.Event()
-    notify_systemd(watchdog_thread)
 
     if is_under_voltage():
         browser_template('under_voltage')

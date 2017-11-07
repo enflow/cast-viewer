@@ -1,9 +1,0 @@
-[Unit]
-Description=Cast Viewer Network Config Tool
-
-[Service]
-Type=oneshot
-ExecStart=/usr/bin/python /usr/sbin/cast_viewer_net_mgr.py
-
-[Install]
-WantedBy=basic.target

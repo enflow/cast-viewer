@@ -1,6 +1,0 @@
-#!/bin/sh -e
-
-# Make sure the SSH host keys have been generated
-ssh-keygen -A
-
-exit 0

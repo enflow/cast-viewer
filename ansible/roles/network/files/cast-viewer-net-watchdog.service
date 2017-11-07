@@ -1,9 +1,0 @@
-[Unit]
-Description=Cast Viewer Network Watchdog
-
-[Service]
-Type=oneshot
-ExecStart=/usr/bin/python /usr/sbin/cast_viewer_net_watchdog.py
-
-[Install]
-WantedBy=multi-user.target

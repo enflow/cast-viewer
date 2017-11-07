@@ -8,6 +8,7 @@ import subprocess
 import netifaces
 import socket
 import math
+import os
 from datetime import timedelta, datetime
 from pythonwifi.iwlibs import Wireless
 
@@ -26,7 +27,6 @@ def get_status():
         'uptime': get_uptime(),
         'ips': get_ips(),
         'disk': get_disk(),
-        'zerotier': get_zerotier_identity(),
         'wifi': get_wifi()
     }
 
@@ -88,22 +88,14 @@ def get_disk():
         'capacity': math.floor(capacity/1.048576e6)
     }
 
-def hostname():
-    hostname = socket.gethostname()
-
-    if hostname == 'raspberrypi':
-        raise RuntimeError('Hostname still is set to the default "raspberrypi". Unable to identiy with that.')
-
-    return hostname
+def device_uuid():
+    return os.environ['RESIN_DEVICE_UUID']
 
 def api_url():
-    return 'https://cast.enflow.nl/api/v1/player/{0}'.format(hostname())
+    return 'https://cast.enflow.nl/api/v1/player/{0}'.format(device_uuid())
 
 def user_agent():
-    return 'enflow-cast-viewer/{0}'.format(get_git_tag())
-
-def get_zerotier_identity():
-    return open('/var/lib/zerotier-one/identity.public').read().split(':')[0];
+    return 'enflow-cast/{0}'.format(get_git_tag())
 
 def get_wifi():
     if not get_ip_by_interface('wlan0'):

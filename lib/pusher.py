@@ -15,14 +15,10 @@ class Pusher(object):
     def event_reboot(self, data):
         os.system('sudo reboot')
 
-    def event_connect_to_zerotier(self, data):
-        os.system('sudo /usr/sbin/zerotier-cli join 17d709436cf23366')
-
     def event_send_heartbeat(self, data):
         send_heartbeat()
 
     def pusher_connected(self, data):
-        channel = self.pusher.subscribe(hostname())
+        channel = self.pusher.subscribe(device_uuid())
         channel.bind('reboot', self.event_reboot)
-        channel.bind('connect_to_zerotier', self.event_connect_to_zerotier)
         channel.bind('send_heartbeat', self.event_send_heartbeat)

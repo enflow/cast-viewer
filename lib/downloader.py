@@ -57,7 +57,7 @@ class Downloader(object):
 
 
     def get_directory(self):
-        directory = '/home/pi/cast-viewer-downloads'
+        directory = '/data/cast-downloads'
 
         if not os.path.exists(directory):
             os.makedirs(directory)
