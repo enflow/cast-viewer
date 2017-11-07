@@ -12,6 +12,15 @@ Environment=HOME=/data
 Environment=DISABLE_UPDATE_CHECK=True
 Environment=PYTHONPATH=/home/pi/cast
 
+# Don't activate screensaver
+ExecStartPre=/usr/bin/xset s off
+
+# Disable DPMS (Energy Star) features
+ExecStartPre=/usr/bin/xset -dpms
+
+# Don't blank the video device
+ExecStartPre=/usr/bin/xset s noblank
+
 ExecStart=/usr/bin/python /home/pi/cast/viewer.py
 Restart=on-failure
 

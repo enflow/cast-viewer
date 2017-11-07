@@ -4,7 +4,7 @@ import pusherclient
 import sh
 import os
 from lib.heartbeater import send_heartbeat
-from lib.system import hostname
+from lib.system import device_uuid
 
 class Pusher(object):
     def __init__(self):

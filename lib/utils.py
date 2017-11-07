@@ -1,10 +1,8 @@
 import requests
 import re
-import certifi
 from netifaces import ifaddresses
 from sh import grep, netstat
 from urlparse import urlparse
-import pytz
 import sys
 import sh
 import hashlib

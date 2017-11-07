@@ -4,8 +4,8 @@ systemctl start X.service
 systemctl start matchbox.service
 systemctl start cast.service
 
-mkdir /data/cast /data/cast/cast-downloads
-# cp -n loading.png /data/cast/loading.png
+mkdir -p /data/cast /data/cast/cast-downloads
+cp -n loading.png /data/cast/loading.png
 
 # By default docker gives us 64MB of shared memory size but to display heavy
 # pages we need more.

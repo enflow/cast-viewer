@@ -24,7 +24,7 @@ class Scheduler(object):
         logging.debug('Scheduler.fetch')
 
         try:
-            r = requests.get(api_url(), headers={'User-Agent': user_agent()})
+            r = requests.get(api_url(), headers={'User-Agent': user_agent(), 'Accept': 'application/json'})
             decoded_response = r.json()
             logging.debug('Status code %s with response %s', r.status_code, decoded_response);
 

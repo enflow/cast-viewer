@@ -10,7 +10,7 @@ from websocket_server import WebsocketServer
 from lib.system import is_under_voltage
 from lib.utils import file_get_contents
 from lib.system import get_status
-from lib.system import hostname
+from lib.system import device_uuid
 from lib.heartbeater import send_heartbeat
 import logging
 import sh

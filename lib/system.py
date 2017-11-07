@@ -1,6 +1,5 @@
 import requests
 import re
-import pytz
 import sys
 import sh
 import os
@@ -17,7 +16,6 @@ def get_status():
 
     return {
         'now': str(datetime.now()),
-        'version': get_git_tag(),
         'throttled': throttled,
         'is_under_voltage': is_under_voltage(throttled),
         'temp': vcgencmd('measure_temp').rstrip().replace('temp=', ''),
@@ -44,9 +42,6 @@ def is_under_voltage(throttled=None):
         throttled = get_throttled()
 
     return throttled in ['0x50005', '0x50000']
-
-def get_git_tag():
-    return subprocess.check_output("git name-rev --tags --name-only $(git rev-parse HEAD)", shell=True).rstrip()
 
 def get_cec():
     return [i for i in sh.cec_client('-s', d=1, _in='pow 0', _ok_code=[0,1]).split('\n') if i][-1]
@@ -89,13 +84,13 @@ def get_disk():
     }
 
 def device_uuid():
-    return os.environ['RESIN_DEVICE_UUID']
+    return socket.gethostname()
 
 def api_url():
     return 'https://cast.enflow.nl/api/v1/player/{0}'.format(device_uuid())
 
 def user_agent():
-    return 'enflow-cast/{0}'.format(get_git_tag())
+    return 'enflow-cast/{0}'.format(device_uuid())
 
 def get_wifi():
     if not get_ip_by_interface('wlan0'):

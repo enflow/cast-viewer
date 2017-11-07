@@ -13,7 +13,7 @@ This code is mostly based on the source provided by the lovely people at Screenl
 - Added heartbeat call to server
 
 ## Development
-Enable debug mode when developing which outputs everything to stdout: `touch /boot/debug`. This will also enable dual-mode inthe chromium window to debug preloading.
+Enable debug mode when developing which outputs everything to stdout: `touch /boot/debug`. This will also enable dual-mode inthe chromium window to debug preloading. Syncing changes to Resin.io: `resin sync ABCDEFG --source . --destination /home/pi/cast`
 
 ### Template editing
 Templates are generated with [Harp](http://harpjs.com/). This enables template inherence and static asset generation out of the box.

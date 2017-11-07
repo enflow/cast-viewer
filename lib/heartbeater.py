@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from lib.system import get_git_tag
 from lib.system import get_status
-from lib.system import hostname
 from lib.system import api_url
 from lib.system import user_agent
 import logging
@@ -23,7 +21,7 @@ def send_heartbeat():
     try:
         status = get_status()
 
-        r = requests.post(api_url() + '/heartbeat', json=status, headers={'User-Agent': user_agent()}, verify=False)
+        r = requests.post(api_url() + '/heartbeat', json=status, headers={'User-Agent': user_agent(), 'Accept': 'application/json'}, verify=False)
 
         if r.status_code is not 200:
             logging.error('Heartbeat: status code %s with response %s', r.status_code, r.text);
