@@ -84,7 +84,7 @@ def get_disk():
     }
 
 def device_uuid():
-    return socket.gethostname()
+    return socket.gethostname().upper()
 
 def api_url():
     return 'https://cast.enflow.nl/api/v1/player/{0}'.format(device_uuid())
