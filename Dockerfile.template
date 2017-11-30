@@ -36,7 +36,7 @@ COPY . /home/pi/cast
 RUN chown -R pi:pi /home/pi
 
 COPY bin/checkwifi.sh /usr/local/bin/checkwifi.sh
-RUN echo "*/1 * * * * /usr/local/bin/checkwifi.sh" | crontab
+RUN chmod +x /usr/local/bin/checkwifi.sh && echo "*/5 * * * * /usr/local/bin/checkwifi.sh" | crontab
 
 WORKDIR /home/pi/cast
 
