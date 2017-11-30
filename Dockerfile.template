@@ -1,4 +1,4 @@
-FROM resin/raspberrypi3-python:3.6.2
+FROM resin/%%RESIN_MACHINE_NAME%%-debian:stretch
 LABEL authors="Viktor Petersson <vpetersson@screenly.io>,Michel Bardelmeijer <michel@enflow.nl>"
 
 RUN apt-get update && \
