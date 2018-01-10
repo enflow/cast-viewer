@@ -31,6 +31,11 @@ RUN useradd pi
 
 RUN /usr/sbin/usermod -a -G video pi
 
+# Install Emoji fonts
+RUN curl https://raw.githubusercontent.com/googlei18n/noto-emoji/master/fonts/NotoColorEmoji.ttf -o /usr/share/fonts/NotoColorEmoji.ttf
+COPY conf/50-noto-color-emoji.conf /etc/fonts/conf.d/50-noto-color-emoji.conf
+RUN /usr/bin/fc-cache -f -v
+
 # Install config file and file structure
 RUN mkdir -p /home/pi/cast
 
