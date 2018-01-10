@@ -20,4 +20,3 @@ Syncing changes to Resin.io: `resin sync ABCDEFG --source . --destination /home/
 ### Template editing
 Templates are generated with [Harp](http://harpjs.com/). This enables template inherence and static asset generation out of the box.
 Recompile the templates by running `harp compile` in the project directory.
-
