@@ -38,11 +38,10 @@ RUN /usr/bin/fc-cache -f -v
 
 # Install config file and file structure
 RUN mkdir -p /home/pi/cast
-
 COPY . /home/pi/cast
-
 RUN chown -R pi:pi /home/pi
 
+# Add additional checkwifi script
 COPY bin/checkwifi.sh /usr/local/bin/checkwifi.sh
 RUN chmod +x /usr/local/bin/checkwifi.sh && echo "*/5 * * * * /usr/local/bin/checkwifi.sh" | crontab
 
