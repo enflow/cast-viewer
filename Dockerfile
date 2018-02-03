@@ -1,11 +1,8 @@
-FROM resin/%%RESIN_MACHINE_NAME%%-debian:stretch
+FROM resin/raspberrypi3-debian:stretch
 LABEL authors="Viktor Petersson <vpetersson@screenly.io>,Michel Bardelmeijer <michel@enflow.nl>"
 
 RUN apt-get update && \
-    echo "deb http://archive.raspberrypi.org/debian stretch main" >> /etc/apt/sources.list.d/raspi.list && \
-    apt-key adv --keyserver pgp.mit.edu --recv-key 0x82B129927FA3303E && \
-    apt-get update && \
-    apt-get -y install build-essential cron git-core net-tools python-netifaces python-simplejson python-imaging python-dev sqlite3 libffi-dev libssl-dev curl psmisc matchbox omxplayer x11-xserver-utils xserver-xorg chromium htop nload cec-utils mediainfo && \
+    apt-get -y install build-essential cron git-core net-tools python-netifaces python-simplejson python-imaging python-dev sqlite3 libffi-dev libssl-dev curl psmisc matchbox omxplayer x11-xserver-utils xserver-xorg chromium htop nload cec-utils mediainfo libpng12-dev libraspberrypi-dev && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -40,6 +37,16 @@ RUN /usr/bin/fc-cache -f -v
 RUN mkdir -p /home/pi/cast
 COPY . /home/pi/cast
 RUN chown -R pi:pi /home/pi
+
+# Install pngview
+RUN cd /home/pi && \
+    git clone https://github.com/AndrewFromMelbourne/raspidmx.git && \
+    cd raspidmx/lib && \
+    make && \
+    cp libraspidmx.so.1 /usr/lib && \
+    cd ../pngview && \
+    make && \
+    cp pngview /usr/bin
 
 # Add additional checkwifi script
 COPY bin/checkwifi.sh /usr/local/bin/checkwifi.sh

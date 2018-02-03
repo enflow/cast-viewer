@@ -9,6 +9,7 @@ cp -n loading.png /data/cast/loading.png
 
 # By default docker gives us 64MB of shared memory size but to display heavy
 # pages we need more.
-umount /dev/shm && mount -t tmpfs shm /dev/shm
+umount /dev/shm
+mount -t tmpfs shm /dev/shm
  
 chown -R pi:pi /data

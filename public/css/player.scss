@@ -1,5 +1,9 @@
 @import "layout";
 
+body {
+    background: #2f3134;
+}
+
 iframe {
     width: 100%;
     height: 100%;
@@ -39,7 +43,7 @@ iframe {
         height: 100%;
         border: 5px solid transparent;
         display: block;
-        top: 0;
+        top: 10%;
         transition: 2s top ease-in-out;
         -webkit-transform: translate3d(0, 0, 0);
         -webkit-backface-visibility: hidden;
@@ -47,7 +51,7 @@ iframe {
 
         &.active {
             border: 5px solid red;
-            top: 20%;
+            top: 0;
             transition: 2s top ease-in-out;
         }
 

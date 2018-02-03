@@ -84,6 +84,9 @@ def get_disk():
     }
 
 def device_uuid():
+    if "/mnt" in os.getcwd():
+        return "DEBUGGG" # 7 chars
+
     return socket.gethostname().upper()
 
 def api_url():

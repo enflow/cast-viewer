@@ -12,23 +12,32 @@ class Downloader(object):
         logging.debug('Downloader init')
 
 
-    def download(self, slides):
+    def download(self, slides, callback):
         slides_to_download = self.get_slides_to_download(slides)
         logging.debug('Downloader.download: %s', slides_to_download)
 
         self.remove_unused(slides_to_download)
 
-        for slide in slides_to_download:
-            path = self.get_path_for_slide(slide)
+        if slides_to_download:
+            slides_downloaded = 0
 
-            if not os.path.isfile(path):
-                download_with_progress(path, slide['url'])
+            callback(slides_downloaded, len(slides_to_download))
 
-            # hacky way to validate if the MP4 is not corrupt
-            mediainfo = sh.mediainfo(path).rstrip()
-            if "Codec ID/Info" not in mediainfo:
-                logging.error('Downloaded file doesn\'t look like a valid mp4 file: %s (hash=%s)', slide['url'], slide['hash'])
-                os.remove(path)
+            for slide in slides_to_download:
+                path = self.get_path_for_slide(slide)
+
+                if not os.path.isfile(path):
+                    download_with_progress(path, slide['url'])
+
+                slides_downloaded+=1
+
+                callback(slides_downloaded, len(slides_to_download))
+
+                # hacky way to validate if the MP4 is not corrupt
+                mediainfo = sh.mediainfo(path).rstrip()
+                if "Codec ID/Info" not in mediainfo:
+                    logging.error('Downloaded file doesn\'t look like a valid mp4 file: %s (hash=%s)', slide['url'], slide['hash'])
+                    os.remove(path)
 
 
     def remove_unused(self, slides_to_download):

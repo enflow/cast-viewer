@@ -12,7 +12,7 @@ HTTP_OK = xrange(200, 299)
 
 def validate_url(string):
     checker = urlparse(string)
-    return bool(checker.scheme in ('http', 'https') and checker.netloc)
+    return bool(checker.scheme in ('http', 'https', 'rtsp', 'rtmp') and checker.netloc)
 
 
 def download_with_progress(file_name, url):

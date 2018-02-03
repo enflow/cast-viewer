@@ -26,7 +26,7 @@ class Scheduler(object):
         try:
             r = requests.get(api_url(), headers={'User-Agent': user_agent(), 'Accept': 'application/json'})
             decoded_response = r.json()
-            logging.debug('Status code %s with response %s', r.status_code, decoded_response);
+            logging.debug('Status code %s with response %s', r.status_code, decoded_response)
 
             if r.status_code == 200:
                 slides = decoded_response['broadcast']['slides'] if decoded_response['broadcast'] else []
@@ -46,7 +46,7 @@ class Scheduler(object):
             elif r.status_code == 500:
                 self.state=self.STATE_INTERNAL_SERVER_ERROR if not self.slides else self.STATE_OK
             else:
-                self.state=self.STATE_NO_CONNECTION if not self.slides else self.STATE_OK
+                self.state=self.STATE_NO_CONNECTION
         except requests.exceptions.ConnectionError as e:
            logging.error('Loading from broadcast cache, ConnectionError: %s', e)
 

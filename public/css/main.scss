@@ -74,3 +74,16 @@ p {
 .loading {
     margin-top: 25px;
 }
+
+progress {
+    background-color: #f3f3f3;
+    border: 0;
+    height: 20px;
+    border-radius: 9px;
+    width: 100%;
+    opacity: 0;
+}
+
+progress[value]::-webkit-progress-value {
+    background: #555;
+}
