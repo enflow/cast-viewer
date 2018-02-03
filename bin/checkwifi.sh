@@ -10,5 +10,5 @@ then
   sleep 5
   /sbin/ifup --force 'wlan0'
 
-  curl --data "type=update-failed&restarted-wifi=1" "https://cast.enflow.nl/api/v1/player/$HOSTNAME/report-failure"
+  curl --data "type=update-failed&restarted-wifi=1" "https://app.beamy.tv/api/v1/player/$HOSTNAME/report-failure"
 fi

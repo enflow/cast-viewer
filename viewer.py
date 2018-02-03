@@ -251,7 +251,7 @@ if __name__ == "__main__":
     except (KeyboardInterrupt, SystemExit) as e:
         pass
     except:
-        logging.exception("Cast viewer crashed.")
+        logging.exception("Beamy crashed.")
         rollbar.report_exc_info()
 
         raise

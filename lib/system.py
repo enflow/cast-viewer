@@ -87,10 +87,10 @@ def device_uuid():
     return socket.gethostname().upper()
 
 def api_url():
-    return 'https://cast.enflow.nl/api/v1/player/{0}'.format(device_uuid())
+    return 'https://app.beamy.tv/api/v1/player/{0}'.format(device_uuid())
 
 def user_agent():
-    return 'enflow-cast/{0}'.format(device_uuid())
+    return 'enflow-beamy/{0}'.format(device_uuid())
 
 def get_wifi():
     if not get_ip_by_interface('wlan0'):
