@@ -40,3 +40,6 @@ def file_get_contents(filename):
         content = fp.read()
         fp.close()
         return content.rstrip()
+
+def is_debugging():
+    return os.path.isfile('/boot/debug')

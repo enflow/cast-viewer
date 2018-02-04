@@ -8,6 +8,7 @@ from time import sleep
 from json import load as json_load
 from lib.system import is_under_voltage
 from lib.utils import file_get_contents
+from lib.utils import is_debugging
 from lib.system import get_status
 from lib.system import device_uuid
 from lib.heartbeater import send_heartbeat
@@ -157,10 +158,7 @@ loading_video = None
 def main():
     global scheduler, schedulerThread, downloader, browser, loading_video
 
-    global DEBUGGING
-    DEBUGGING = True #os.path.isfile('/boot/debug')
-
-    if DEBUGGING:
+    if is_debugging():
         root = logging.getLogger()
         root.setLevel(logging.DEBUG)
     else:
@@ -199,9 +197,9 @@ if __name__ == "__main__":
     except (KeyboardInterrupt, SystemExit) as e:
         pass
     except:
-        logging.exception("Cast viewer crashed.")
+        logging.exception("Beamy crashed.")
 
-        if not DEBUGGING:
+        if not is_debugging():
             rollbar.report_exc_info()
 
         raise

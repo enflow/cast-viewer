@@ -66,4 +66,4 @@ class Downloader(object):
 
 
     def get_directory(self):
-        return '/data/cast-downloads'
+        return '/data/beamy-downloads'

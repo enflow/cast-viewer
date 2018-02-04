@@ -20,8 +20,8 @@ RUN systemctl enable X.service
 COPY conf/matchbox.service /etc/systemd/system/matchbox.service
 RUN systemctl enable matchbox.service
 
-COPY conf/cast.service /etc/systemd/system/cast.service
-RUN systemctl enable cast.service
+COPY conf/beamy.service /etc/systemd/system/beamy.service
+RUN systemctl enable beamy.service
 
 # Create runtime user
 RUN useradd pi
@@ -34,8 +34,8 @@ COPY conf/50-noto-color-emoji.conf /etc/fonts/conf.d/50-noto-color-emoji.conf
 RUN /usr/bin/fc-cache -f -v
 
 # Install config file and file structure
-RUN mkdir -p /home/pi/cast
-COPY . /home/pi/cast
+RUN mkdir -p /home/pi/beamy
+COPY . /home/pi/beamy
 RUN chown -R pi:pi /home/pi
 
 # Install pngview
@@ -52,6 +52,6 @@ RUN cd /home/pi && \
 COPY bin/checkwifi.sh /usr/local/bin/checkwifi.sh
 RUN chmod +x /usr/local/bin/checkwifi.sh && echo "*/5 * * * * /usr/local/bin/checkwifi.sh" | crontab
 
-WORKDIR /home/pi/cast
+WORKDIR /home/pi/beamy
 
 CMD ["bash", "bin/start_resin.sh"]
