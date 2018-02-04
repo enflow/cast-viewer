@@ -15,7 +15,7 @@ class Scheduler(object):
 
     def __init__(self):
         logging.debug('Scheduler init')
-        self.slides = None
+        self.slides = []
         self.index = 0
         self.counter = 0
         self.state = self.STATE_NO_CONNECTION

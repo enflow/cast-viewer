@@ -56,14 +56,12 @@ status_overlay = None
 def broadcast_loop(scheduler):
     global browser, status_overlay, loading_video
 
-    if loading_video is not None:
-        loading_video.kill()
-        loading_video = None
+    kill_loading_video()
 
     still_has_statusoverlay = False
 
     if scheduler.state == scheduler.STATE_NO_CONNECTION:
-        if scheduler.slides is not empty:
+        if not scheduler.slides:
             browser.template('no_connection')
             sleep(EMPTY_BROADCAST_DELAY)
             return
@@ -71,7 +69,7 @@ def broadcast_loop(scheduler):
             still_has_statusoverlay = True
 
             if not status_overlay:
-                status_overlay = sh.pngview("./public/img/no-internet-connection.png", n=True, b="0xffffffff", _bg=True)
+                status_overlay = sh.pngview("./public/img/no-internet-connection.png", n=True, b="0xFF4444", _bg=True)
 
     if status_overlay and not still_has_statusoverlay:
         status_overlay.kill()
@@ -128,17 +126,23 @@ def get_slide_url(slide):
 
     return slide['url']
 
+def kill_loading_video():
+    global loading_video
+    if loading_video is not None:
+        loading_video.kill()
+        loading_video = None
 
 def run_scheduler():
-    global scheduler, browser
+    global scheduler, browser, loading_video
 
     logging.debug('Running scheduler thread')
 
     if scheduler.fetch():
+        kill_loading_video()
+
         browser.template('loading')
 
         def callback(current, total):
-            print(current, total)
             browser.template('loading', {'current': current, 'total': total})
 
         downloader.download(scheduler.slides, callback)

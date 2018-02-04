@@ -21,7 +21,7 @@ $(function() {
     };
 
     var setSlideVisibleEvent = function($iframe) {
-        if ($iframe.attr('src').indexOf('cast.enflow') != -1) {
+        if ($iframe.attr('src').indexOf('app.beamy.tv') != -1 || $iframe.attr('src').indexOf('beamy.enflow') != -1) {
             var sendSlideVisible = function() {
                 $iframe[0].contentWindow.postMessage({
                     'message': 'slide:visible'
@@ -110,4 +110,12 @@ $(function() {
     open({
         url: 'loading.html'
     });
+
+    /*setTimeout(function () {
+        open({'url': 'https://app.beamy.tv/api/v1/player/10BE13C/slide/1'});
+    }, 1000);
+
+    setTimeout(function () {
+        preload({'url': 'blank.html'});
+    }, 2000);*/
 });

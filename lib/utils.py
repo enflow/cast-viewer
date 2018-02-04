@@ -42,4 +42,4 @@ def file_get_contents(filename):
         return content.rstrip()
 
 def is_debugging():
-    return os.path.isfile('/boot/debug')
+    return os.path.isfile('/boot/debug') or '/mnt' in __file__

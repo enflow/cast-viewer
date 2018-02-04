@@ -17,7 +17,13 @@ Deployment to devices happens trough Resin.io: a container based fleet managemen
 
 ## Development
 Enable debug mode when developing which outputs everything to stdout: `touch /boot/debug`. This will also enable dual-mode inthe chromium window to debug preloading.
-Syncing changes to Resin.io: `resin sync ABCDEFG --source . --destination /home/pi/beamy`
+
+## SSH
+```
+sudo resin sync 10be13c --source . --destination /home/pi/beamy
+sudo resin local ssh 192.168.0.32
+sudo resin local push 192.168.0.32
+```
 
 ### Template editing
 Templates are generated with [Harp](http://harpjs.com/). This enables template inherence and static asset generation out of the box.
