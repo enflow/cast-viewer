@@ -14,7 +14,7 @@ body {
 
 .wrapper {
     width: 100%;
-    max-width: 400px;
+    max-width: 460px;
     margin: 0 auto;
     padding: 20px 20px;
 }
@@ -22,12 +22,13 @@ body {
 .form-signin {
     text-align: left;
     font-size: .875rem;
-    color: #555;
+    color: #212529;
 }
 
 .btn-primary {
     background-color: #4450aa;
     border-color: #4450aa;
+	font-weight:bold;
 }
 
 .btn-primary:hover {
@@ -48,4 +49,13 @@ body {
 
 .list-group-item:focus {
     outline: none;
+}
+
+.form-group label {
+	margin-bottom:.25rem;
+	font-weight:bold;
+}
+
+p {
+	margin-bottom: 2rem;
 }
