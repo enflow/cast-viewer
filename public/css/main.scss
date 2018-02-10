@@ -88,3 +88,13 @@ progress {
 progress[value]::-webkit-progress-value {
     background: #181f54;
 }
+
+.hotspot {
+    display: flex;
+    flex-direction: row;
+}
+
+.hotspot-side {
+    width: 50%;
+    text-align: center;
+}

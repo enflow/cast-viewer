@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Beamy WiFi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/app.css">
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/index.js"></script>
+</head>
+
+<body class="text-center">
+<div class="wrapper">
+    <img class="mb-4" src="img/logo.svg" width="126">
+
+    <div class="js-before-submit">
+        <h1 class="h3 mb-3 font-weight-normal">Kies je WiFi netwerk</h1>
+        <p>We zijn er bijna! Kies hieronder je eigen WiFi netwerk met het bijbehorende wachtwoord. De Beamy Player probeert hierna met dit netwerk te verbinden.</p>
+
+        <form class="form-signin js-connect-form" action="/connect" method="post">
+            <div class="form-group">
+                <label for="ssid-select">WiFi naam
+                    <small>(SSID)</small>
+                </label>
+                <select class="form-control custom-select js-ssid-select" id="ssid-select" name="ssid" required></select>
+            </div>
+            <div class="form-group">
+                <label for="passphrase">Wachtwoord</label>
+                <input type="text" class="form-control" id="passphrase" name="passphrase" autocomplete="off" autocapitalize="off" required>
+                <small class="help-text">Let op dat dit wachtwoord correct is!</small>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-block btn-primary btn-lg js-submit-button">Verbinden</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="row submit-message text-left" hidden>
+        <h3 class="mb-3">Wijzigingen doorvoeren...</h3>
+        <p>Je Beamy Player is zometeen online!</p>
+
+        <p>Als de verbinding is mislukt met je WiFi netwerk, komt het Beamy WiFi netwerk terug. Je kunt daarna deze pagina herladen om het opnieuw te proberen.</p>
+    </div>
+    <div class="row no-networks-message text-left" hidden>
+        <h3>Geen WiFi netwerken gevonden</h3>
+        <p>Zorg ervoor dat de Beamy Player dichtbij een WiFi router is en start de Beamy Player opnieuw.</p>
+    </div>
+</div>
+</body>
+</html>

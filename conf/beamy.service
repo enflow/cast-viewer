@@ -9,6 +9,7 @@ User=pi
 Environment=DISPLAY=:0
 Environment=NOREFRESH=1
 Environment=HOME=/data
+Environment=DBUS_SYSTEM_BUS_ADDRESS=unix:path=/host/run/dbus/system_bus_socket
 
 # Don't activate screensaver
 ExecStartPre=/usr/bin/xset s off

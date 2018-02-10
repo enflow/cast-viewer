@@ -1,0 +1,41 @@
+html,
+body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background-color: #f5f5f5;
+    padding: 0;
+}
+
+.wrapper {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px 20px;
+}
+
+.form-signin {
+    text-align: left;
+    font-size: .875rem;
+    color: #555;
+}
+
+.btn-primary {
+    background-color: #4450aa;
+    border-color: #4450aa;
+}
+
+.btn-primary:hover {
+    background-color: #253397;
+    border-color: #253397;
+}
+
+.btn-primary:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}

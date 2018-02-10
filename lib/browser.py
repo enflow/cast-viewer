@@ -9,6 +9,7 @@ import threading
 import json
 import urllib
 from websocket_server import WebsocketServer
+from lib.utils import is_debugging
 from time import sleep
 
 class Browser(object):
@@ -37,7 +38,7 @@ class Browser(object):
             '--disable-translate',
             '--system-developer-mode',
             '--disable-hang-monitor',
-            'file://' + os.getcwd() + '/www/player.html?debug=' + ("1" if True else "0"), 
+            'file://' + os.getcwd() + '/www/player.html?debug=' + ("1" if is_debugging() else "0"),
             _bg=True
             )
         logging.info('Browser loaded. Running as PID %s. Waiting for websocket connection.', self.browser.pid)

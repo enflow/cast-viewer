@@ -2,30 +2,35 @@ FROM resin/raspberrypi3-debian:stretch
 LABEL authors="Viktor Petersson <vpetersson@screenly.io>,Michel Bardelmeijer <michel@enflow.nl>"
 
 RUN apt-get update && \
-    apt-get -y install build-essential cron git-core net-tools python-netifaces python-simplejson python-imaging python-dev sqlite3 libffi-dev libssl-dev curl psmisc matchbox omxplayer x11-xserver-utils xserver-xorg chromium htop nload cec-utils mediainfo libpng12-dev libraspberrypi-dev && \
+    apt-get -y install build-essential cron git-core net-tools python-netifaces python-simplejson python-imaging python-dev sqlite3 libffi-dev libssl-dev curl psmisc matchbox omxplayer x11-xserver-utils xserver-xorg chromium htop nload cec-utils mediainfo libpng12-dev libraspberrypi-dev dnsmasq wireless-tools && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+
+# enable container init system.
+ENV INITSYSTEM on
 
 # Install Python requirements
 COPY requirements.txt /tmp/requirements.txt
 RUN curl -s https://bootstrap.pypa.io/get-pip.py | /usr/bin/python && \
     /usr/bin/env python -m pip install --upgrade --force-reinstall -r /tmp/requirements.txt
 
-# enable container init system.
-ENV INITSYSTEM on
+RUN curl https://api.github.com/repos/resin-io/resin-wifi-connect/releases/latest -s \
+    | grep -hoP 'browser_download_url": "\K.*rpi\.tar\.gz' \
+    | xargs -n1 curl -Ls \
+    | tar -xvz -C /usr/local/bin
 
+# Install services
 COPY conf/X.service /etc/systemd/system/X.service
-RUN systemctl enable X.service
-
 COPY conf/matchbox.service /etc/systemd/system/matchbox.service
-RUN systemctl enable matchbox.service
-
 COPY conf/beamy.service /etc/systemd/system/beamy.service
+
+RUN systemctl enable X.service
+RUN systemctl enable matchbox.service
 RUN systemctl enable beamy.service
 
 # Create runtime user
 RUN useradd pi
-
+RUN echo "pi ALL=(ALL) NOPASSWD:SETENV: /usr/local/bin/wifi-connect" >> /etc/sudoers
 RUN /usr/sbin/usermod -a -G video pi
 
 # Install Emoji fonts

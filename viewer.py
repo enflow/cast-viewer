@@ -12,6 +12,7 @@ from lib.utils import is_debugging
 from lib.system import get_status
 from lib.system import device_uuid
 from lib.heartbeater import send_heartbeat
+from netifaces import gateways
 import logging
 import sh
 import sys
@@ -41,35 +42,34 @@ schedulerThread = None
 downloader = None
 server = None
 
-def start_playing_video(uri, duration=None, loop=None):
-    global browser
-
-    player_args = []
+def start_playing_video(uri, duration=None, loop=False):
+    player_args = ['omxplayer', uri]
+    player_kwargs = {'o': 'hdmi', 'b': True, 'loop': loop, '_bg': True, '_ok_code': [0, 124, 143]}
 
     if duration and duration != 'N/A':
-        player_args = ['timeout', duration]
+        player_args = ['timeout', duration] + player_args
 
-    return sh.omxplayer(uri, timeout=duration, loop=True, o='hdmi', _bg=True, b=True, _ok_code=[0, 124])
+    kill_loading_video()
+
+    print(player_args)
+    print(player_kwargs)
+
+    return sh.Command(player_args[0])(*player_args[1:], **player_kwargs)
 
 status_overlay = None
 
 def broadcast_loop(scheduler):
-    global browser, status_overlay, loading_video
+    global browser, status_overlay
 
     kill_loading_video()
 
     still_has_statusoverlay = False
 
     if scheduler.state == scheduler.STATE_NO_CONNECTION:
-        if not scheduler.slides:
-            browser.template('no_connection')
-            sleep(EMPTY_BROADCAST_DELAY)
-            return
-        else:
-            still_has_statusoverlay = True
+        still_has_statusoverlay = True
 
-            if not status_overlay:
-                status_overlay = sh.pngview("./public/img/no-internet-connection.png", n=True, b="0xFF4444", _bg=True)
+        if not status_overlay:
+            status_overlay = sh.pngview("./public/img/no-internet-connection.png", n=True, b="0xFF4444", _bg=True)
 
     if status_overlay and not still_has_statusoverlay:
         status_overlay.kill()
@@ -177,6 +177,25 @@ def main():
     Pusher()
 
     browser.start()
+
+    if not path.isfile('/data/.wifi_set'):
+        if not gateways().get('default'):
+            ssid = "Beamy-{}".format(device_uuid()[:7])
+            browser.template('hotspot', {'ssid': ssid})
+            kill_loading_video()
+
+            logging.debug("Starting wifi-connect captive portal with SSID %s", ssid)
+
+            wifi_connect = sh.sudo('-E', 'wifi-connect', '-s', ssid, '-u', path.join(os.getcwd(), 'wifi-connect-ui'), '-a', 1800, _bg=True, _err_to_out=True)
+
+            while 'Starting HTTP server' not in wifi_connect.process.stdout:
+                sleep(1)
+
+            while not gateways().get('default'):
+                sleep(2)
+
+            with open('/data/.wifi_set', 'a'):
+                pass
 
     t = threading.Thread(target=send_heartbeat)
     t.daemon = True
