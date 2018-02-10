@@ -39,3 +39,13 @@ body {
     opacity: .5;
     cursor: not-allowed;
 }
+
+.list-group-item.active {
+    background: #f3f3f3;
+    border-color: #e6e6e6;
+    color: #333;
+}
+
+.list-group-item:focus {
+    outline: none;
+}
