@@ -3,6 +3,7 @@ import re
 from netifaces import ifaddresses
 from sh import grep, netstat
 from urlparse import urlparse
+from os import environ
 import sys
 import sh
 import hashlib
@@ -42,4 +43,4 @@ def file_get_contents(filename):
         return content.rstrip()
 
 def is_debugging():
-    return os.path.isfile('/boot/debug') or '/mnt' in __file__
+    return "DEBUG" in os.environ

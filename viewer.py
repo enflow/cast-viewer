@@ -51,9 +51,6 @@ def start_playing_video(uri, duration=None, loop=False):
 
     kill_loading_video()
 
-    print(player_args)
-    print(player_kwargs)
-
     return sh.Command(player_args[0])(*player_args[1:], **player_kwargs)
 
 status_overlay = None
