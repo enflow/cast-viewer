@@ -43,4 +43,4 @@ def file_get_contents(filename):
         return content.rstrip()
 
 def is_debugging():
-    return "DEBUG" in os.environ
+    return "/mnt" in os.getcwd() or "DEBUG" in os.environ

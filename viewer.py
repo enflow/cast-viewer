@@ -43,6 +43,9 @@ downloader = None
 server = None
 
 def start_playing_video(uri, duration=None, loop=False):
+    if "/mnt" in os.getcwd():
+        return None
+
     player_args = ['omxplayer', uri]
     player_kwargs = {'o': 'hdmi', 'b': True, 'loop': loop, '_bg': True, '_ok_code': [0, 124, 143]}
 
@@ -104,7 +107,7 @@ def broadcast_loop(scheduler):
         browser.preload(preloadable_slide, get_slide_url(preloadable_slide))
 
         sleep(duration - 1)
-    elif 'video' or 'streaming' in type:
+    elif 'video' in type or 'streaming' in type:
         browser.preload(preloadable_slide, get_slide_url(preloadable_slide))
 
         run = start_playing_video(load, slide['duration'])
@@ -186,6 +189,7 @@ def main():
             wifi_connect = sh.sudo('-E', 'wifi-connect', '-s', ssid, '-u', path.join(os.getcwd(), 'wifi-connect-ui'), '-a', 1800, _bg=True, _err_to_out=True)
 
             while 'Starting HTTP server' not in wifi_connect.process.stdout:
+                print(wifi_connect.process.stdout)
                 sleep(1)
 
             while not gateways().get('default'):

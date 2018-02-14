@@ -27,6 +27,9 @@ class Browser(object):
     def start(self):
         logging.info('Loading browser...')
 
+        if "/mnt" in os.getcwd():
+            return None
+
         if self.browser:
             logging.info('killing previous browser %s', browser.pid)
             self.browser.process.kill()
@@ -95,7 +98,7 @@ class Browser(object):
         if slide is None:
             return
 
-        if 'video' or 'streaming' in slide['type']:
+        if 'video' in slide['type'] or 'streaming' in slide['type']:
             url = self.template_url('blank')
 
         self.send({'action': 'preload', 'url': url})
