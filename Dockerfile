@@ -2,7 +2,7 @@ FROM resin/raspberrypi3-debian:stretch
 LABEL authors="Viktor Petersson <vpetersson@screenly.io>,Michel Bardelmeijer <michel@enflow.nl>"
 
 RUN apt-get update && \
-    apt-get -y install build-essential cron git-core net-tools python-netifaces python-simplejson python-imaging python-dev sqlite3 libffi-dev libssl-dev curl psmisc matchbox omxplayer x11-xserver-utils xserver-xorg chromium htop nload cec-utils mediainfo libpng12-dev libraspberrypi-dev dnsmasq wireless-tools && \
+    apt-get -y install build-essential cron git-core net-tools python-netifaces python-simplejson python-dev libffi-dev libssl-dev curl psmisc matchbox omxplayer x11-xserver-utils xserver-xorg chromium htop cec-utils mediainfo libpng12-dev libraspberrypi-dev dnsmasq rpi-update raspi-config libgl1-mesa-dri mesa-utils libgles2-mesa && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -24,9 +24,7 @@ COPY conf/X.service /etc/systemd/system/X.service
 COPY conf/matchbox.service /etc/systemd/system/matchbox.service
 COPY conf/beamy.service /etc/systemd/system/beamy.service
 
-RUN systemctl enable X.service
-RUN systemctl enable matchbox.service
-RUN systemctl enable beamy.service
+RUN systemctl enable X.service && systemctl enable matchbox.service && systemctl enable beamy.service
 
 # Create runtime user
 RUN useradd pi

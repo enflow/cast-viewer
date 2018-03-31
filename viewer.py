@@ -27,7 +27,6 @@ import subprocess
 
 from lib.downloader import Downloader
 from lib.scheduler import Scheduler
-from lib.pusher import Pusher
 from lib.browser import Browser
 
 __author__ = "Enflow (original by WireLoad Inc)"
@@ -61,7 +60,8 @@ status_overlay = None
 def broadcast_loop(scheduler):
     global browser, status_overlay
 
-    kill_loading_video()
+    if browser.websocket_client:
+        kill_loading_video()
 
     still_has_statusoverlay = False
 
@@ -174,7 +174,6 @@ def main():
     scheduler = Scheduler()
     browser = Browser()
     schedulerThread = None
-    Pusher()
 
     browser.start()
 
