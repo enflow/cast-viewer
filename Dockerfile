@@ -23,12 +23,7 @@ RUN apt-get update && \
         mediainfo \
         libpng12-dev \
         libraspberrypi-dev \
-        dnsmasq \
-        rpi-update \
-        raspi-config \
-        libgl1-mesa-dri \
-        mesa-utils \
-        libgles2-mesa && \
+        dnsmasq && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
