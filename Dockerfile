@@ -2,7 +2,33 @@ FROM resin/raspberrypi3-debian:stretch
 LABEL authors="Viktor Petersson <vpetersson@screenly.io>,Michel Bardelmeijer <michel@enflow.nl>"
 
 RUN apt-get update && \
-    apt-get -y install build-essential cron git-core net-tools python-netifaces python-simplejson python-dev libffi-dev libssl-dev curl psmisc matchbox omxplayer x11-xserver-utils xserver-xorg chromium htop cec-utils mediainfo libpng12-dev libraspberrypi-dev dnsmasq rpi-update raspi-config libgl1-mesa-dri mesa-utils libgles2-mesa && \
+    apt-get -y install build-essential \
+        cron \
+        dos2unix \
+        git-core \
+        net-tools \
+        python-netifaces \
+        python-simplejson \
+        python-dev \
+        libffi-dev \
+        libssl-dev \
+        curl psmisc \
+        matchbox \
+        omxplayer \
+        x11-xserver-utils \
+        xserver-xorg \
+        chromium \
+        htop \
+        cec-utils \
+        mediainfo \
+        libpng12-dev \
+        libraspberrypi-dev \
+        dnsmasq \
+        rpi-update \
+        raspi-config \
+        libgl1-mesa-dri \
+        mesa-utils \
+        libgles2-mesa && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -24,17 +50,19 @@ COPY conf/X.service /etc/systemd/system/X.service
 COPY conf/matchbox.service /etc/systemd/system/matchbox.service
 COPY conf/beamy.service /etc/systemd/system/beamy.service
 
-RUN systemctl enable X.service && systemctl enable matchbox.service && systemctl enable beamy.service
+RUN systemctl enable X.service && \
+    systemctl enable matchbox.service && \
+    systemctl enable beamy.service
 
 # Create runtime user
-RUN useradd pi
-RUN echo "pi ALL=(ALL) NOPASSWD:SETENV: /usr/local/bin/wifi-connect" >> /etc/sudoers
-RUN /usr/sbin/usermod -a -G video pi
+RUN useradd pi && \
+    echo "pi ALL=(ALL) NOPASSWD:SETENV: /usr/local/bin/wifi-connect" >> /etc/sudoers && \
+    /usr/sbin/usermod -a -G video pi
 
 # Install Emoji fonts
-RUN curl https://raw.githubusercontent.com/googlei18n/noto-emoji/master/fonts/NotoColorEmoji.ttf -o /usr/share/fonts/NotoColorEmoji.ttf
 COPY conf/50-noto-color-emoji.conf /etc/fonts/conf.d/50-noto-color-emoji.conf
-RUN /usr/bin/fc-cache -f -v
+RUN curl https://raw.githubusercontent.com/googlei18n/noto-emoji/master/fonts/NotoColorEmoji.ttf -o /usr/share/fonts/NotoColorEmoji.ttf && \
+    /usr/bin/fc-cache -f -v
 
 # Install config file and file structure
 RUN mkdir -p /home/pi/beamy
@@ -56,5 +84,7 @@ COPY bin/checkwifi.sh /usr/local/bin/checkwifi.sh
 RUN chmod +x /usr/local/bin/checkwifi.sh && echo "*/5 * * * * /usr/local/bin/checkwifi.sh" | crontab
 
 WORKDIR /home/pi/beamy
+
+RUN dos2unix bin/start_resin.sh
 
 CMD ["bash", "bin/start_resin.sh"]

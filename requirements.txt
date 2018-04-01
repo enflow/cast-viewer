@@ -5,4 +5,3 @@ websocket-server==0.4
 rollbar>=0.13.8
 python-wifi==0.6.1
 netifaces==0.10.6
--e git://github.com/bumbar1/PythonPusherClient.git@cluster#egg=ekulyk
