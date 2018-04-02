@@ -12,7 +12,8 @@ RUN apt-get update && \
         python-dev \
         libffi-dev \
         libssl-dev \
-        curl psmisc \
+        curl \
+        psmisc \
         matchbox \
         omxplayer \
         x11-xserver-utils \
