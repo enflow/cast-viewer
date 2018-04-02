@@ -2,7 +2,7 @@ FROM resin/raspberrypi3-debian:stretch
 LABEL authors="Viktor Petersson <vpetersson@screenly.io>,Michel Bardelmeijer <michel@enflow.nl>"
 
 RUN apt-get update && \
-    apt-get -y install build-essential \
+    apt-get -y --no-install-recommends install build-essential \
         cron \
         dos2unix \
         git-core \
