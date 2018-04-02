@@ -47,6 +47,10 @@ class Scheduler(object):
                 self.state=self.STATE_INTERNAL_SERVER_ERROR if not self.slides else self.STATE_OK
             else:
                 self.state=self.STATE_NO_CONNECTION
+        except requests.exceptions.SSLError as e:
+           # pff
+           logging.error('SSL error when loading broadcast. This is possibly due to a out-of-sync unit. Will "crash" for now but will ensure a valid state: %s', e)
+           exit(1)
         except requests.exceptions.ConnectionError as e:
            logging.error('Loading from broadcast cache, ConnectionError: %s', e)
 

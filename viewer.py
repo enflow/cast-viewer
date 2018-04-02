@@ -197,6 +197,7 @@ def main():
 
                 wifi_connect.kill()
             except sh.SignalException_SIGKILL:
+                pass
 
             with open('/data/.wifi_set', 'a'):
                 pass

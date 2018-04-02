@@ -5,7 +5,9 @@ $(function () {
             $('.no-networks-message').removeAttr('hidden');
         } else {
             $.each(JSON.parse(data), function (i, val) {
-                $(".js-ssid-select").append('<button class="list-group-item list-group-item-action js-select-wifi-network">' + val + '</button>');
+                if (val) {
+                    $(".js-ssid-select").append('<button class="list-group-item list-group-item-action js-select-wifi-network">' + val + '</button>');
+                }
             });
         }
     });
@@ -13,12 +15,13 @@ $(function () {
     $('.js-connect-form').submit(function (e) {
         e.preventDefault();
 
-        $('.js-submit-button').attr('disabled', 'disabled');
+        $('.js-before-submit').hide();
+        $('.submit-message').removeAttr('hidden');
 
-        $.post('/connect', $('.js-connect-form').serialize(), function (data) {
-            $('.js-before-submit').hide();
-            $('.submit-message').removeAttr('hidden');
-        });
+        setTimeout(function () {
+            $.post('/connect', $('.js-connect-form').serialize(), function (data) {
+            });
+        }, 1500);
     });
 
     $(document).on('click', '.js-select-wifi-network', function () {
