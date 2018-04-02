@@ -185,14 +185,18 @@ def main():
 
             logging.debug("Starting wifi-connect captive portal with SSID %s", ssid)
 
-            wifi_connect = sh.sudo('-E', 'wifi-connect', '-s', ssid, '-u', path.join(os.getcwd(), 'wifi-connect-ui'), '-a', 1800, _bg=True, _err_to_out=True)
+            try:
+                wifi_connect = sh.sudo('-E', 'wifi-connect', '-s', ssid, '-u', path.join(os.getcwd(), 'wifi-connect-ui'), '-a', 1800, _bg=True, _err_to_out=True)
 
-            while 'Starting HTTP server' not in wifi_connect.process.stdout:
-                print(wifi_connect.process.stdout)
-                sleep(1)
+                while 'Starting HTTP server' not in wifi_connect.process.stdout:
+                    print(wifi_connect.process.stdout)
+                    sleep(1)
 
-            while not gateways().get('default'):
-                sleep(2)
+                while not gateways().get('default'):
+                    sleep(2)
+
+                wifi_connect.kill()
+            except sh.SignalException_SIGKILL:
 
             with open('/data/.wifi_set', 'a'):
                 pass
