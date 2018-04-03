@@ -108,6 +108,7 @@ def broadcast_loop(scheduler):
 
         sleep(duration - 1)
     elif 'video' in type or 'streaming' in type:
+        browser.template('blank')
         browser.preload(preloadable_slide, get_slide_url(preloadable_slide))
 
         run = start_playing_video(load, slide['duration'])
