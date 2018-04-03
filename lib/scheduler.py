@@ -49,8 +49,9 @@ class Scheduler(object):
                 self.state=self.STATE_NO_CONNECTION
         except requests.exceptions.SSLError as e:
            # pff
+           # todo: rewrite to check the time trough dbus: https://github.com/resin-io-playground/resin-python-ntp-dbus/blob/master/ntptest.py
            logging.error('SSL error when loading broadcast. This is possibly due to a out-of-sync unit. Will "crash" for now but will ensure a valid state: %s', e)
-           exit(1)
+           raise SystemExit('SSL error, possibly time is not synced yet')
         except requests.exceptions.ConnectionError as e:
            logging.error('Loading from broadcast cache, ConnectionError: %s', e)
 

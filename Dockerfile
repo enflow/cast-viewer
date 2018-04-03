@@ -51,9 +51,9 @@ RUN systemctl enable X.service && \
     systemctl enable beamy.service
 
 # Create runtime user
-RUN useradd pi && \
-    echo "pi ALL=(ALL) NOPASSWD:SETENV: /usr/local/bin/wifi-connect" >> /etc/sudoers && \
-    /usr/sbin/usermod -a -G video pi
+RUN useradd pi
+RUN echo "pi ALL=(ALL) NOPASSWD:SETENV: /usr/local/bin/wifi-connect" >> /etc/sudoers
+RUN /usr/sbin/usermod -a -G video pi
 
 # Install Emoji fonts
 COPY conf/50-noto-color-emoji.conf /etc/fonts/conf.d/50-noto-color-emoji.conf
