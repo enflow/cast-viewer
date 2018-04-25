@@ -1,14 +1,14 @@
 [Unit]
 Description=Beamy
-After=network-online.target
+After=X.service matchbox.service
 
 [Service]
-WorkingDirectory=/home/pi/beamy
-User=pi
+WorkingDirectory=/root/beamy
+User=root
 
 Environment=DISPLAY=:0
 Environment=NOREFRESH=1
-Environment=HOME=/home/pi
+Environment=HOME=/root/beamy
 Environment=DBUS_SYSTEM_BUS_ADDRESS=unix:path=/host/run/dbus/system_bus_socket
 
 # Don't activate screensaver
@@ -20,7 +20,7 @@ ExecStartPre=/usr/bin/xset -dpms
 # Don't blank the video device
 ExecStartPre=/usr/bin/xset s noblank
 
-ExecStart=/usr/bin/env python /home/pi/beamy/viewer.py
+ExecStart=/usr/bin/env python /root/beamy/viewer.py
 Restart=on-failure
 
 [Install]

@@ -22,12 +22,23 @@ $(function () {
             $.post('/connect', $('.js-connect-form').serialize(), function (data) {
             });
         }, 1500);
+
+        setTimeout(function () {
+            $('.connect-warning').animate({ opacity: 1 });
+        }, 3500);
     });
 
     $(document).on('click', '.js-select-wifi-network', function () {
         $('input[name="ssid"]').val($(this).html());
         $('.js-select-wifi-network').removeClass('active');
         $(this).addClass('active');
+
+        $('html, body').animate({
+            scrollTop: $(this).offset().top
+        }, 250, function () {
+            $(".js-connect-form input[name='passphrase']").focus();
+        });
+
         return false;
     });
 });

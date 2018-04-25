@@ -5,7 +5,7 @@ ping -c4 8.8.8.8 > /dev/null
 if [ $? != 0 ]
 then
   echo "No network connection, restarting wlan0"
-  echo "$(date) Restarting Wifi " >> /home/pi/restart_wifi_status.log
+  echo "$(date) Restarting Wifi " >> /root/restart_wifi_status.log
   /sbin/ifdown 'wlan0'
   sleep 5
   /sbin/ifup --force 'wlan0'

@@ -28,6 +28,7 @@ import subprocess
 from lib.downloader import Downloader
 from lib.scheduler import Scheduler
 from lib.browser import Browser
+from lib.ntp import NTPQuery
 
 __author__ = "Enflow (original by WireLoad Inc)"
 __copyright__ = "Copyright 2012-2016, WireLoad Inc"
@@ -178,6 +179,7 @@ def main():
 
     browser.start()
 
+    # setup wifi connect when no internet connection is found
     if not path.isfile('/data/.wifi_set'):
         if not gateways().get('default'):
             ssid = "Beamy-{}".format(device_uuid()[:7])
@@ -196,16 +198,23 @@ def main():
                 while not gateways().get('default'):
                     sleep(2)
 
+                with open('/data/.wifi_set', 'a'):
+                    pass
+
                 wifi_connect.kill()
             except sh.SignalException_SIGKILL:
-                pass
-
-            with open('/data/.wifi_set', 'a'):
                 pass
 
     t = threading.Thread(target=send_heartbeat)
     t.daemon = True
     t.start()
+
+    # ensure that the time is up-to-date before making requests as SSL validation will fail
+    if gateways().get('default'):
+        NTP = NTPQuery()
+        while not NTP.get_ntp_syncronized():
+            logging.error("NTP not synchronized yet, waiting for 5 seconds and trying again")
+            sleep(5)
 
     while True:
         if not scheduler.slides or len(scheduler.slides) - 1 == scheduler.index or scheduler.state != scheduler.STATE_OK:

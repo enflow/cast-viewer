@@ -11,13 +11,15 @@
     <script src="js/index.js"></script>
 </head>
 
-<body class="text-center">
+<body>
 <div class="wrapper">
-    <img class="mb-4" src="img/logo.svg" width="126">
+    <div class="text-center">
+        <img class="mb-4" src="img/logo.svg" width="126">
+    </div>
 
     <div class="js-before-submit">
-        <h1 class="h3 mb-3 font-weight-normal">Kies je WiFi netwerk</h1>
-        <p>We zijn er bijna! Kies hieronder jouw eigen WiFi netwerk en vul het bijbehorende wachtwoord in. De Beamy Player probeert hierna met dit netwerk te verbinden.</p>
+        <h3 class="mb-2">Kies je WiFi netwerk</h3>
+        <p class="mb-4">We zijn er bijna! Kies hieronder jouw eigen WiFi netwerk en vul het bijbehorende wachtwoord in. De Beamy Player probeert hierna met dit netwerk te verbinden.</p>
 
         <form class="form-signin js-connect-form" action="/connect" method="post">
             <div class="form-group">
@@ -39,10 +41,9 @@
     </div>
 
     <div class="submit-message text-left" hidden>
-        <h4 class="mb-3">Wijzigingen doorvoeren...</h4>
-        <p>Je Beamy Player is zometeen online!</p>
+        <h4 class="mb-2">Verbinden...</h4>
 
-        <p>Als de verbinding is mislukt met je WiFi netwerk, komt het Beamy WiFi netwerk terug. Je kunt daarna deze pagina herladen om het opnieuw te proberen.</p>
+        <p class="connect-warning">Als de verbinding is mislukt met je WiFi netwerk, komt het Beamy WiFi netwerk terug. Je kunt daarna deze pagina opnieuw laden om het opnieuw te proberen.</p>
     </div>
     <div class="no-networks-message text-left" hidden>
         <h4>Geen WiFi netwerken gevonden</h4>

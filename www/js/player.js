@@ -112,10 +112,10 @@ $(function() {
     });
 
     /*setTimeout(function () {
-        open({'url': 'https://app.beamy.tv/api/v1/player/10BE13C/slide/1'});
+        preload({'url': 'http://beamy.enflow/api/v1/player/A9F5170/slide/2045464172'});
     }, 1000);
 
     setTimeout(function () {
-        preload({'url': 'blank.html'});
-    }, 2000);*/
+        open({'url': 'http://beamy.enflow/api/v1/player/A9F5170/slide/2045464172'});
+    }, 4000);*/
 });

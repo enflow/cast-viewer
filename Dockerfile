@@ -9,6 +9,7 @@ RUN apt-get update && \
         net-tools \
         python-netifaces \
         python-simplejson \
+        python-dbus \
         python-dev \
         libffi-dev \
         libssl-dev \
@@ -18,12 +19,14 @@ RUN apt-get update && \
         omxplayer \
         x11-xserver-utils \
         xserver-xorg \
+        x11-apps \
         chromium \
         htop \
         cec-utils \
         mediainfo \
         libpng12-dev \
         libraspberrypi-dev \
+        imagemagick \
         dnsmasq && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -50,23 +53,20 @@ RUN systemctl enable X.service && \
     systemctl enable matchbox.service && \
     systemctl enable beamy.service
 
-# Create runtime user
-RUN useradd pi
-RUN echo "pi ALL=(ALL) NOPASSWD:SETENV: /usr/local/bin/wifi-connect" >> /etc/sudoers
-RUN /usr/sbin/usermod -a -G video pi
-
 # Install Emoji fonts
 COPY conf/50-noto-color-emoji.conf /etc/fonts/conf.d/50-noto-color-emoji.conf
+COPY www/fonts/raleway-bold.ttf /usr/share/fonts
+COPY www/fonts/raleway-regular.ttf /usr/share/fonts
+
 RUN curl https://raw.githubusercontent.com/googlei18n/noto-emoji/master/fonts/NotoColorEmoji.ttf -o /usr/share/fonts/NotoColorEmoji.ttf && \
     /usr/bin/fc-cache -f -v
 
 # Install config file and file structure
-RUN mkdir -p /home/pi/beamy
-COPY . /home/pi/beamy
-RUN chown -R pi:pi /home/pi
+RUN mkdir -p /root/beamy
+COPY . /root/beamy
 
 # Install pngview
-RUN cd /home/pi && \
+RUN cd /tmp && \
     git clone https://github.com/AndrewFromMelbourne/raspidmx.git && \
     cd raspidmx/lib && \
     make && \
@@ -79,8 +79,8 @@ RUN cd /home/pi && \
 COPY bin/checkwifi.sh /usr/local/bin/checkwifi.sh
 RUN chmod +x /usr/local/bin/checkwifi.sh && echo "*/5 * * * * /usr/local/bin/checkwifi.sh" | crontab
 
-WORKDIR /home/pi/beamy
+WORKDIR /root/beamy
 
-RUN dos2unix bin/start_resin.sh
+RUN dos2unix bin/start.sh
 
-CMD ["bash", "bin/start_resin.sh"]
+CMD ["bash", "bin/start.sh"]

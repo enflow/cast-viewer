@@ -20,7 +20,7 @@ Enable debug mode when developing which outputs everything to stdout: `touch /bo
 
 ## SSH
 ```
-sudo resin sync 10be13c --source . --destination /home/pi/beamy
+sudo resin sync XXXXXXX --source . --destination /root/beamy
 sudo resin local ssh 192.168.0.32
 sudo resin local push 192.168.0.32
 ```
@@ -28,3 +28,6 @@ sudo resin local push 192.168.0.32
 ### Template editing
 Templates are generated with [Harp](http://harpjs.com/). This enables template inherence and static asset generation out of the box.
 Recompile the templates by running `harp compile` in the project directory.
+
+### Splash screen
+Copy the `public/img/resin-logo.png` to the (installed) SD Card in the `splash` folder. Filename shouldn't be changed.

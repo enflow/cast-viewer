@@ -11,4 +11,4 @@ mkdir -p /data/beamy-downloads
 umount /dev/shm
 mount -t tmpfs shm /dev/shm
  
-chown -R pi:pi /data
+chown -R root:root /data

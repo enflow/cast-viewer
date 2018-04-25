@@ -35,6 +35,8 @@ class Browser(object):
             self.browser.process.kill()
 
         self.browser = sh.chromium(
+            '--no-sandbox',
+            '--disable-infobars',
             '--kiosk',
             '--incognito',
             '--no-first-run',
@@ -50,14 +52,15 @@ class Browser(object):
         logging.info('Browser loaded. Running as PID %s. Waiting for websocket connection.', self.browser.pid)
 
         for i in range(1, 50):
-            if self.websocket_client is None:
+            if self.websocket_client is not None:
                 break
 
             logging.debug("Waiting for websocket client %s", i)
             sleep(.5)
 
         # Ensure webpage is fully loaded
-        sleep(5)
+        logging.debug("Sleeping 3 seconds")
+        sleep(3)
 
     def start_websocket_server(self):
         logging.debug('Running websocket server')

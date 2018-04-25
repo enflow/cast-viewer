@@ -8,6 +8,7 @@ import netifaces
 import socket
 import math
 import os
+import commands
 from datetime import timedelta, datetime
 from pythonwifi.iwlibs import Wireless
 
@@ -25,7 +26,8 @@ def get_status():
         'uptime': get_uptime(),
         'ips': get_ips(),
         'disk': get_disk(),
-        'wifi': get_wifi()
+        'wifi': get_wifi(),
+        'screenshot': get_screenshot()
     }
 
 def vcgencmd(command):
@@ -112,3 +114,6 @@ def get_wifi():
         }
     except Exception as e:
         return str(e)
+
+def get_screenshot():
+    return commands.getoutput('xwd -root -display :0 | convert -quality 65% -resize 480x270 xwd:- INLINE:JPG:-')
