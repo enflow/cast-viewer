@@ -77,7 +77,7 @@ RUN cd /tmp && \
 
 # Add additional checkwifi script
 COPY bin/checkwifi.sh /usr/local/bin/checkwifi.sh
-RUN chmod +x /usr/local/bin/checkwifi.sh && echo "*/5 * * * * /usr/local/bin/checkwifi.sh" | crontab
+RUN chmod +x /usr/local/bin/checkwifi.sh && echo "*/10 * * * * /usr/local/bin/checkwifi.sh" | crontab
 
 WORKDIR /root/beamy
 
