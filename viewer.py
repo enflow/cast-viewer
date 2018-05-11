@@ -24,6 +24,7 @@ import rollbar
 import threading
 import requests
 import subprocess
+import commands
 
 from lib.downloader import Downloader
 from lib.scheduler import Scheduler
@@ -222,6 +223,8 @@ def main():
             schedulerThread.start()
             if not scheduler.slides and schedulerThread.isAlive():
                 wait_for_scheduler()
+
+        commands.getoutput('xset s off && xset -dpms && xset s noblank')
 
         broadcast_loop(scheduler)
 
