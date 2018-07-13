@@ -56,7 +56,7 @@ class Browser(object):
                 break
 
             logging.debug("Waiting for websocket client %s", i)
-            sleep(.5)
+            sleep(1)
 
         # Ensure webpage is fully loaded
         logging.debug("Sleeping 3 seconds")
